@@ -26,96 +26,96 @@ void update_force(particle_list &);
 // Basic 2D vector. Uses standard copy constructor
 struct vec
 {
-    scalar x;
-    scalar y;
+	scalar x;
+	scalar y;
 
-    // Simple constructor initializing with zeroes
-    vec()
-    {
-        x = 0;
-        y = 0;
-    }
+	// Simple constructor initializing with zeroes
+	vec()
+	{
+		x = 0;
+		y = 0;
+	}
 
-    // Constructor with custom initializations
-    vec(scalar ix, scalar iy)
-    {
-        x = ix;
-        y = iy;
-    }
+	// Constructor with custom initializations
+	vec(scalar ix, scalar iy)
+	{
+		x = ix;
+		y = iy;
+	}
 
-    // Define the '+'-operator for vectors
-    vec operator+(const vec &rhs)
-    {
-        return vec(x + rhs.x, y + rhs.y);
-    }
+	// Define the '+'-operator for vectors
+	vec operator+(const vec &rhs)
+	{
+		return vec(x + rhs.x, y + rhs.y);
+	}
 };
 
 // A particle, containing position, velocity and a force acting on it
 struct particle
 {
-    vec r;
-    vec v;
-    vec F;
+	vec r;
+	vec v;
+	vec F;
 
-    // Previous force, as temp variable needed for the verlet algorithm
-    // Is written by the 'update_force' function.
-    vec pF;
+	// Previous force, as temp variable needed for the verlet algorithm
+	// Is written by the 'update_force' function.
+	vec pF;
 };
 
 int main()
 {
-    const size_t N = 100;
-    particle_list p(N);
-    update_force(p);
+	const size_t N = 100;
+	particle_list p(N);
+	update_force(p);
 }
 
 // Recalculate the forces acting on the particles.
 // Will backup the previous force to the pV member of the particles.
 void update_force(particle_list &p)
 {
-    // Backup the force and calculate the wall repulsion
-    for (auto i : p)
-    {
-        i.pF = i.F;
+	// Backup the force and calculate the wall repulsion
+	for (auto i : p)
+	{
+		i.pF = i.F;
 
-        scalar d;
+		scalar d;
 
-        bool within_reach = false;
-        scalar force_direction = 0;
+		bool within_reach = false;
+		scalar force_direction = 0;
 
-        if (i.r.x < pot_size)
-        {
-            d = i.r.x;
-            within_reach = true;
-            force_direction = 1;
-        }
-        else if (i.r.x > width - pot_size)
-        {
-            d = width - i.r.x;
-            within_reach = true;
-            force_direction = -1;
-        }
+		if (i.r.x < pot_size)
+		{
+			d = i.r.x;
+			within_reach = true;
+			force_direction = 1;
+		}
+		else if (i.r.x > width - pot_size)
+		{
+			d = width - i.r.x;
+			within_reach = true;
+			force_direction = -1;
+		}
 
-        if (within_reach)
-        {
-            scalar d2 = d * d;
-            scalar d6 = d2 * d2 * d2;
-            scalar F_wall = 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
+		if (within_reach)
+		{
+			scalar d2 = d * d;
+			scalar d6 = d2 * d2 * d2;
+			scalar F_wall = 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
 
-            i.F = vec(F_wall * force_direction, 0);
-        }
-        else
-            i.F = vec(0, 0);
-    }
+			i.F = vec(F_wall * force_direction, 0);
+		}
+		else
+			i.F = vec(0, 0);
+	}
 
-    // Calculating the forces for all particle combinations
-    for (size_t i = 0; i < p.size() - 1; ++i)
-    {
+	// Calculating the forces for all particle combinations
+	for (size_t i = 0; i < p.size() - 1; ++i)
+	{
 
-        for (size_t j = i + 1; j < p.size(); ++j)
+		for (size_t j = i + 1; j < p.size(); ++j)
 
-            if (abs(p[i].r.x - p[j].r.x) < box_cutoff && abs(p[i].r.y - p[j].r.y) < box_cutoff)
-            {
-            }
-    }
+			if (abs(p[i].r.x - p[j].r.x) < box_cutoff && abs(p[i].r.y - p[j].r.y) < box_cutoff)
+			{
+			}
+	}
 }
