@@ -12,7 +12,7 @@ typedef float scalar;
 typedef vector<particle> particle_list;
 
 // System parameters
-const size_t N = 100;
+const size_t N = 2;
 scalar box_cutoff = 1.1225;
 scalar height = 6.;
 scalar width = 10.;
@@ -26,6 +26,7 @@ scalar dt = 1e-2;
 
 // Function declarations
 void update_force(particle_list &);
+scalar lennard_jones(scalar);
 
 // Definitions
 
@@ -107,20 +108,23 @@ int main()
 
 	scalar T = 0;
 
-	p[0].r = vec(3, 1);
-	p[0].v = vec(0, -3);
+	p[0].r = vec(3, 0);
+	p[0].v = vec(-3, 0);
+
+	p[1].r = vec(6, 0);
+	p[1].v = vec(-1, 0);
 
 	update_force(p);
 
 	// Verlet integration
 	bool integrate = true;
-	while (T < 10)
+	while (T < 3)
 	{
 		p[0].shout();
 		for (auto &i : p)
 		{
 			i.r += dt * i.v + 0.5 * dt * dt * i.F;
-			
+
 			while (i.r.y < 0)
 				i.r.y += height;
 			while (i.r.y > height)
@@ -166,10 +170,7 @@ void update_force(particle_list &p)
 
 		if (within_reach)
 		{
-			scalar d2 = d * d;
-			scalar d6 = d2 * d2 * d2;
-			scalar F_wall = 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
-
+			scalar F_wall = lennard_jones(d);
 			i.F = vec(-F_wall * force_direction, 0);
 		}
 		else
@@ -181,9 +182,28 @@ void update_force(particle_list &p)
 	{
 
 		for (size_t j = i + 1; j < p.size(); ++j)
+		{
 
-			if (abs(p[i].r.x - p[j].r.x) < box_cutoff && abs(p[i].r.y - p[j].r.y) < box_cutoff)
+			scalar deltax = abs(p[i].r.x - p[j].r.x);
+			scalar deltay = abs(p[i].r.y - p[j].r.y);
+
+			if (deltax < box_cutoff && deltay < box_cutoff)
 			{
+				scalar r = sqrt(deltax * deltax + deltay * deltay);
+				scalar F = lennard_jones(r);
+
+				scalar Fx = F * deltax / r;
+				scalar Fy = F * deltay / r;
+
+				p[i].F += vec(Fx, Fy);
+				p[j].F += vec(-Fx, -Fy);
 			}
+		}
 	}
+}
+
+inline scalar lennard_jones(scalar d)
+{
+	scalar d6 = d * d * d * d * d * d;
+	return 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
 }
