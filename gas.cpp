@@ -17,10 +17,12 @@ scalar box_cutoff = 1.1225;
 scalar height = 6.;
 scalar width = 10.;
 
+scalar velocity_max = 1;
+
 scalar pot_size = pow(2, 1. / 6.);
 scalar pot_size6 = 2;
 
-scalar dt = 1e-3;
+scalar dt = 1e-2;
 
 // Function declarations
 void update_force(particle_list &);
@@ -73,6 +75,11 @@ struct particle
 	vec v;
 	vec F;
 
+	void shout()
+	{
+		cout << "I'm a particle @ x = " << r.x << ", y = " << r.y << endl;
+	}
+
 	// Previous force, as temp variable needed for the verlet algorithm
 	// Is written by the 'update_force' function.
 	vec pF;
@@ -84,25 +91,49 @@ int main()
 
 	particle_list p(N);
 
+	for (auto &i : p)
+	{
+		scalar r_x = (scalar)rand() / RAND_MAX;
+		scalar r_y = (scalar)rand() / RAND_MAX;
+		scalar r_v = velocity_max * (scalar)rand() / RAND_MAX;
+		scalar r_phi = 2 * M_PI * (scalar)rand() / RAND_MAX;
+
+		r_x = pot_size + r_x * (width - 2 * pot_size);
+		r_y *= height;
+
+		i.r = vec(r_x, r_y);
+		i.v = vec(sin(r_phi) * r_v, cos(r_phi) * r_v);
+	}
+
 	scalar T = 0;
+
+	p[0].r = vec(3, 1);
+	p[0].v = vec(0, -3);
 
 	update_force(p);
 
 	// Verlet integration
-	while (T < 1)
+	bool integrate = true;
+	while (T < 10)
 	{
-		for (auto i : p)
+		p[0].shout();
+		for (auto &i : p)
 		{
 			i.r += dt * i.v + 0.5 * dt * dt * i.F;
-			i.r.y = fmod(i.r.y, height);
+			
+			while (i.r.y < 0)
+				i.r.y += height;
+			while (i.r.y > height)
+				i.r.y -= height;
 		}
 
 		update_force(p);
 
-		for (auto i : p)
+		for (auto &i : p)
 			i.v += 0.5 * dt * (i.F + i.pF);
 
 		T += dt;
+		integrate = false;
 	}
 }
 
@@ -111,7 +142,7 @@ int main()
 void update_force(particle_list &p)
 {
 	// Backup the force and calculate the wall repulsion
-	for (auto i : p)
+	for (auto &i : p)
 	{
 		i.pF = i.F;
 
@@ -139,7 +170,7 @@ void update_force(particle_list &p)
 			scalar d6 = d2 * d2 * d2;
 			scalar F_wall = 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
 
-			i.F = vec(F_wall * force_direction, 0);
+			i.F = vec(-F_wall * force_direction, 0);
 		}
 		else
 			i.F = vec(0, 0);
