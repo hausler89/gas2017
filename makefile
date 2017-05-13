@@ -5,9 +5,9 @@ CFLAGS = -std=c++14 -c -O3 -Wall
 LFLAGS = -std=c++14 -lncurses
 
 #------------------------------------------------------------------------------
-SOURCE = gas.cpp
+SOURCE = gas.cpp gui.cpp
 OBJECT = gas.o
-HEADER = 
+HEADER = gui.h
 
 #------------------------------------------------------------------------------
 $(NAME):$(OBJECT)
