@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <ctime>
 
 using namespace std;
 
@@ -11,12 +12,15 @@ typedef float scalar;
 typedef vector<particle> particle_list;
 
 // System parameters
+const size_t N = 100;
 scalar box_cutoff = 1.1225;
 scalar height = 6.;
 scalar width = 10.;
 
 scalar pot_size = pow(2, 1. / 6.);
 scalar pot_size6 = 2;
+
+scalar dt = 1e-3;
 
 // Function declarations
 void update_force(particle_list &);
@@ -48,7 +52,19 @@ struct vec
 	{
 		return vec(x + rhs.x, y + rhs.y);
 	}
+	vec &operator+=(const vec &rhs)
+	{
+		x += rhs.x;
+		y += rhs.y;
+		return *this;
+	}
 };
+
+// Multiplication of vector with scalar
+vec operator*(const scalar &lhs, const vec &rhs)
+{
+	return vec(lhs * rhs.x, lhs * rhs.y);
+}
 
 // A particle, containing position, velocity and a force acting on it
 struct particle
@@ -64,9 +80,30 @@ struct particle
 
 int main()
 {
-	const size_t N = 100;
+	srand(time(NULL));
+
 	particle_list p(N);
+
+	scalar T = 0;
+
 	update_force(p);
+
+	// Verlet integration
+	while (T < 1)
+	{
+		for (auto i : p)
+		{
+			i.r += dt * i.v + 0.5 * dt * dt * i.F;
+			i.r.y = fmod(i.r.y, height);
+		}
+
+		update_force(p);
+
+		for (auto i : p)
+			i.v += 0.5 * dt * (i.F + i.pF);
+
+		T += dt;
+	}
 }
 
 // Recalculate the forces acting on the particles.
