@@ -15,6 +15,7 @@ typedef vector<particle> particle_list;
 // System parameters
 const size_t N = 100;
 const scalar box_cutoff = 1.1225;
+const scalar pot_size = pow(2, 1. / 6.);
 const scalar height = 6.;
 const scalar width = 10.;
 
@@ -23,7 +24,7 @@ const int grid_w = 12;
 
 const scalar velocity_max = 1;
 
-const scalar pot_size = pow(2, 1. / 6.);
+
 const scalar pot_size6 = 2;
 
 const scalar dt = 1e-4;
