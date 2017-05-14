@@ -1,3 +1,5 @@
 *.o
 GAS
 .vscode*
+output.dat
+gmon.out

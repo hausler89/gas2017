@@ -1,8 +1,8 @@
 NAME = GAS
 CC = clang++
 
-CFLAGS = -std=c++14 -c -O3 -Wall
-LFLAGS = -std=c++14 -lncurses
+CFLAGS = -std=c++14 -c -O3 -Wall -pg
+LFLAGS = -std=c++14 -pg
 
 #------------------------------------------------------------------------------
 SOURCE = gas.cpp

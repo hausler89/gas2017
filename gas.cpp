@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
+#include <fstream>
 
 using namespace std;
 
@@ -12,21 +13,23 @@ typedef float scalar;
 typedef vector<particle> particle_list;
 
 // System parameters
-const size_t N = 2;
-scalar box_cutoff = 1.1225;
-scalar height = 6.;
-scalar width = 10.;
+const size_t N = 1;
+const scalar box_cutoff = 1.1225;
+const scalar height = 6.;
+const scalar width = 10.;
 
-scalar velocity_max = 1;
+const scalar velocity_max = 1;
 
-scalar pot_size = pow(2, 1. / 6.);
-scalar pot_size6 = 2;
+const scalar pot_size = pow(2, 1. / 6.);
+const scalar pot_size6 = 2;
 
-scalar dt = 1e-2;
+const scalar dt = 1e-5;
 
 // Function declarations
 void update_force(particle_list &);
 scalar lennard_jones(scalar);
+void limit_force(particle_list &, scalar);
+void limit_velocity(particle_list &, scalar);
 
 // Definitions
 
@@ -92,6 +95,9 @@ int main()
 
 	particle_list p(N);
 
+	ofstream file;
+	file.open("output.dat");
+
 	for (auto &i : p)
 	{
 		scalar r_x = (scalar)rand() / RAND_MAX;
@@ -107,36 +113,63 @@ int main()
 	}
 
 	scalar T = 0;
+	scalar T_diag = 0;
 
-	p[0].r = vec(3, 0);
-	p[0].v = vec(-3, 0);
+	//p[0].r = vec(4, 5);
+	// p[0].v = vec(100, 0);
 
-	p[1].r = vec(6, 0);
-	p[1].v = vec(-1, 0);
+	/*p[1].r = vec(4, 1);
+	p[1].v = vec(0, -1);*/
 
 	update_force(p);
+	limit_force(p, 0.1);
 
 	// Verlet integration
 	bool integrate = true;
-	while (T < 3)
+	while (T < 10)
 	{
-		p[0].shout();
+		//p[0].shout();
+		if (T_diag > 0.1)
+		{
+			T_diag = 0;
+			cout << p[0].r.x << "\t" << p[0].r.y << endl;
+		}
+		//limit_velocity(p, 10);
 		for (auto &i : p)
 		{
 			i.r += dt * i.v + 0.5 * dt * dt * i.F;
 
+			if(isnan(i.r.x))
+				cout << "x-pos is NaN" << endl;
+
+			if(isnan(i.r.y))
+				cout << "y-pos is NaN" << endl;
 			while (i.r.y < 0)
+			{
 				i.r.y += height;
+			}
 			while (i.r.y > height)
+			{
 				i.r.y -= height;
+			}
 		}
 
 		update_force(p);
+		limit_force(p, 100);
+
+		/*for (int i = 0; i < N; ++i)
+		{
+			cout << i << ": " << p[i].r.y << endl;
+		}*/
+		//if (T < 10 * dt)
+		//limit_force(p, 1);
 
 		for (auto &i : p)
 			i.v += 0.5 * dt * (i.F + i.pF);
 
+		limit_velocity(p, 100);
 		T += dt;
+		T_diag += dt;
 		integrate = false;
 	}
 }
@@ -184,10 +217,16 @@ void update_force(particle_list &p)
 		for (size_t j = i + 1; j < p.size(); ++j)
 		{
 
-			scalar deltax = abs(p[i].r.x - p[j].r.x);
-			scalar deltay = abs(p[i].r.y - p[j].r.y);
+			scalar deltax = p[i].r.x - p[j].r.x;
 
-			if (deltax < box_cutoff && deltay < box_cutoff)
+			scalar deltay = p[i].r.y - p[j].r.y;
+
+			if (abs(p[i].r.y - p[j].r.y - height) < abs(deltay))
+				deltay = p[i].r.y - p[j].r.y - height;
+			else if (abs(p[i].r.y - p[j].r.y + height) < abs(deltay))
+				deltay = p[i].r.y - p[j].r.y + height;
+
+			if (abs(deltax) < box_cutoff && abs(deltay) < box_cutoff)
 			{
 				scalar r = sqrt(deltax * deltax + deltay * deltay);
 				scalar F = lennard_jones(r);
@@ -195,15 +234,43 @@ void update_force(particle_list &p)
 				scalar Fx = F * deltax / r;
 				scalar Fy = F * deltay / r;
 
-				p[i].F += vec(Fx, Fy);
-				p[j].F += vec(-Fx, -Fy);
+				p[i].F += vec(-Fx, -Fy);
+				p[j].F += vec(Fx, Fy);
 			}
 		}
 	}
 }
 
+void limit_force(particle_list &p, scalar max_force)
+{
+	for (auto &i : p)
+	{
+		if (abs(i.F.x) > max_force)
+			i.F.x = i.F.x / abs(i.F.x) * max_force;
+
+		if (abs(i.F.y) > max_force)
+			i.F.y = i.F.y / abs(i.F.y) * max_force;
+	}
+}
+
+void limit_velocity(particle_list &p, scalar max_velocity)
+{
+	for (auto &i : p)
+	{
+		if (abs(i.v.x) > max_velocity)
+			i.v.x = i.v.x / abs(i.v.x) * max_velocity;
+
+		if (abs(i.v.y) > max_velocity)
+			i.v.y = i.v.y / abs(i.v.y) * max_velocity;
+	}
+}
 inline scalar lennard_jones(scalar d)
 {
-	scalar d6 = d * d * d * d * d * d;
-	return 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
+	if (d < pot_size)
+	{
+		scalar d6 = d * d * d * d * d * d;
+		return 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
+	}
+	else
+		return 0;
 }
