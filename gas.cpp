@@ -101,7 +101,7 @@ int main()
 	ofstream file;
 	file.open("output.dat");
 
-	for (int i = 0; i < N; ++i)
+	for (size_t i = 0; i < N; ++i)
 	{
 		scalar r_v = velocity_max * (scalar)rand() / RAND_MAX;
 		scalar r_phi = 2 * M_PI * (scalar)rand() / RAND_MAX;
@@ -124,7 +124,7 @@ int main()
 	// Verlet integration
 	try
 	{
-		while (T < 200)
+		while (T < 20)
 		{
 
 			if (T_diag > 10000 * dt)
