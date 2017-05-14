@@ -24,16 +24,15 @@ const int grid_w = 12;
 
 const scalar velocity_max = 1;
 
-
 const scalar pot_size6 = 2;
 
 const scalar dt = 1e-4;
 
 // Function declarations
 void update_force(particle_list &);
-scalar lennard_jones(scalar);
-void limit_force(particle_list &, scalar);
-void limit_velocity(particle_list &, scalar);
+inline scalar lennard_jones(scalar);
+// void limit_force(particle_list &, scalar);
+// void limit_velocity(particle_list &, scalar);
 
 // Definitions
 
@@ -120,13 +119,12 @@ int main()
 	scalar T = 0;
 	scalar T_diag = 0;
 
-
 	update_force(p);
 
 	// Verlet integration
 	try
 	{
-		while (T < 20)
+		while (T < 200)
 		{
 
 			if (T_diag > 10000 * dt)
@@ -221,7 +219,7 @@ void update_force(particle_list &p)
 
 		for (size_t j = i + 1; j < p.size(); ++j)
 		{
-			
+
 			//__builtin_prefetch (&p[i+1], 1, 1);
 
 			scalar deltax = p[i].r.x - p[j].r.x;
