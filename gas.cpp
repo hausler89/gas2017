@@ -13,7 +13,7 @@ typedef float scalar;
 typedef vector<particle> particle_list;
 
 // System parameters
-const size_t N = 1;
+const size_t N = 100;
 const scalar box_cutoff = 1.1225;
 const scalar height = 6.;
 const scalar width = 10.;
@@ -23,7 +23,7 @@ const scalar velocity_max = 1;
 const scalar pot_size = pow(2, 1. / 6.);
 const scalar pot_size6 = 2;
 
-const scalar dt = 1e-5;
+const scalar dt = 1e-6;
 
 // Function declarations
 void update_force(particle_list &);
@@ -122,55 +122,69 @@ int main()
 	p[1].v = vec(0, -1);*/
 
 	update_force(p);
-	limit_force(p, 0.1);
+	limit_force(p, 1000);
 
 	// Verlet integration
 	bool integrate = true;
-	while (T < 10)
+	try
 	{
-		//p[0].shout();
-		if (T_diag > 0.1)
+		while (T < 10)
 		{
-			T_diag = 0;
-			cout << p[0].r.x << "\t" << p[0].r.y << endl;
-		}
-		//limit_velocity(p, 10);
-		for (auto &i : p)
-		{
-			i.r += dt * i.v + 0.5 * dt * dt * i.F;
-
-			if(isnan(i.r.x))
-				cout << "x-pos is NaN" << endl;
-
-			if(isnan(i.r.y))
-				cout << "y-pos is NaN" << endl;
-			while (i.r.y < 0)
+			//p[0].shout();
+			if (T_diag > 100 * dt)
 			{
-				i.r.y += height;
+				T_diag = 0;
+				cout << p[0].r.x << "\t" << p[0].r.y << endl;
 			}
-			while (i.r.y > height)
+			//limit_velocity(p, 10);
+			for (auto &i : p)
 			{
-				i.r.y -= height;
+				i.r += dt * i.v + 0.5 * dt * dt * i.F;
+
+				if (isnan(i.r.y) || isnan(i.r.x))
+					throw 100;
+
+				while (i.r.y < 0)
+				{
+					i.r.y += height;
+				}
+				while (i.r.y > height)
+				{
+					i.r.y -= height;
+				}
+
+				if (i.r.x > width || i.r.x < 0)
+					throw 200;
 			}
-		}
 
-		update_force(p);
-		limit_force(p, 100);
+			update_force(p);
+			limit_force(p, 100);
 
-		/*for (int i = 0; i < N; ++i)
+			/*for (int i = 0; i < N; ++i)
 		{
 			cout << i << ": " << p[i].r.y << endl;
 		}*/
-		//if (T < 10 * dt)
-		//limit_force(p, 1);
+			//if (T < 10 * dt)
+			//limit_force(p, 1);
 
-		for (auto &i : p)
-			i.v += 0.5 * dt * (i.F + i.pF);
+			for (auto &i : p)
+				i.v += 0.5 * dt * (i.F + i.pF);
 
-		limit_velocity(p, 100);
-		T += dt;
-		T_diag += dt;
-		integrate = false;
+			limit_velocity(p, 0.1*pot_size / dt);
+			T += dt;
+			T_diag += dt;
+			integrate = false;
+		}
+	}
+	catch (int e)
+	{
+		switch (e)
+		{
+		case 100:
+			cout << "NaN in variable occured" << endl;
+		case 200:
+			cout << "Particle left boundary" << endl;
+		}
 	}
 }
 
