@@ -1,8 +1,8 @@
 NAME = GAS
 CC = g++
 
-CFLAGS = -std=gnu++14 -c -Wall -g
-LFLAGS = -std=gnu++14 -g
+CFLAGS = -std=gnu++14 -Ofast -c -Wall
+LFLAGS = -std=gnu++14
 
 #------------------------------------------------------------------------------
 SOURCE = gas.cpp
