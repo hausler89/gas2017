@@ -9,7 +9,7 @@ using namespace std;
 // Type declarations
 struct vec;
 struct particle;
-typedef float scalar;
+typedef double scalar;
 typedef vector<particle> particle_list;
 
 // System parameters
@@ -18,12 +18,15 @@ const scalar box_cutoff = 1.1225;
 const scalar height = 6.;
 const scalar width = 10.;
 
+const int grid_h = 9;
+const int grid_w = 12;
+
 const scalar velocity_max = 1;
 
 const scalar pot_size = pow(2, 1. / 6.);
 const scalar pot_size6 = 2;
 
-const scalar dt = 1e-6;
+const scalar dt = 1e-4;
 
 // Function declarations
 void update_force(particle_list &);
@@ -98,31 +101,28 @@ int main()
 	ofstream file;
 	file.open("output.dat");
 
-	for (auto &i : p)
+	for (int i = 0; i < N; ++i)
 	{
-		scalar r_x = (scalar)rand() / RAND_MAX;
-		scalar r_y = (scalar)rand() / RAND_MAX;
 		scalar r_v = velocity_max * (scalar)rand() / RAND_MAX;
 		scalar r_phi = 2 * M_PI * (scalar)rand() / RAND_MAX;
 
-		r_x = pot_size + r_x * (width - 2 * pot_size);
-		r_y *= height;
+		int pos_x = i % grid_w;
+		int pos_y = i / grid_w;
 
-		i.r = vec(r_x, r_y);
-		i.v = vec(sin(r_phi) * r_v, cos(r_phi) * r_v);
+		scalar x = scalar(pos_x) / scalar(grid_w) * (width - 2 * pot_size) + pot_size;
+		scalar y = scalar(pos_y) / scalar(grid_h + 1) * height;
+
+		//cout << x << " " << y << endl;
+
+		p[i].r = vec(x, y);
+		p[i].v = vec(sin(r_phi) * r_v, cos(r_phi) * r_v);
 	}
 
 	scalar T = 0;
 	scalar T_diag = 0;
 
-	//p[0].r = vec(4, 5);
-	// p[0].v = vec(100, 0);
-
-	/*p[1].r = vec(4, 1);
-	p[1].v = vec(0, -1);*/
 
 	update_force(p);
-	limit_force(p, 1000);
 
 	// Verlet integration
 	bool integrate = true;
@@ -130,19 +130,22 @@ int main()
 	{
 		while (T < 10)
 		{
-			//p[0].shout();
-			if (T_diag > 100 * dt)
+
+			if (T_diag > 1000 * dt)
 			{
 				T_diag = 0;
 				cout << p[0].r.x << "\t" << p[0].r.y << endl;
 			}
-			//limit_velocity(p, 10);
+
+			//limit_force(p, 0.5 * 2 * pot_size / (dt * dt));
+			//limit_velocity(p, 0.5 * pot_size / dt);
+
 			for (auto &i : p)
 			{
 				i.r += dt * i.v + 0.5 * dt * dt * i.F;
 
 				if (isnan(i.r.y) || isnan(i.r.x))
-					throw 100;
+					throw 100; // Error code for NaN
 
 				while (i.r.y < 0)
 				{
@@ -154,23 +157,14 @@ int main()
 				}
 
 				if (i.r.x > width || i.r.x < 0)
-					throw 200;
+					throw 200; // Error code for leaving the area
 			}
 
 			update_force(p);
-			limit_force(p, 100);
-
-			/*for (int i = 0; i < N; ++i)
-		{
-			cout << i << ": " << p[i].r.y << endl;
-		}*/
-			//if (T < 10 * dt)
-			//limit_force(p, 1);
-
+			//limit_force(p, 0.5 * 2 * pot_size / (dt * dt));
 			for (auto &i : p)
 				i.v += 0.5 * dt * (i.F + i.pF);
 
-			limit_velocity(p, 0.1*pot_size / dt);
 			T += dt;
 			T_diag += dt;
 			integrate = false;
@@ -202,13 +196,13 @@ void update_force(particle_list &p)
 		bool within_reach = false;
 		scalar force_direction = 0;
 
-		if (i.r.x < pot_size)
+		if (i.r.x < box_cutoff)
 		{
 			d = i.r.x;
 			within_reach = true;
 			force_direction = 1;
 		}
-		else if (i.r.x > width - pot_size)
+		else if (i.r.x > width - box_cutoff)
 		{
 			d = width - i.r.x;
 			within_reach = true;
@@ -232,7 +226,6 @@ void update_force(particle_list &p)
 		{
 
 			scalar deltax = p[i].r.x - p[j].r.x;
-
 			scalar deltay = p[i].r.y - p[j].r.y;
 
 			if (abs(p[i].r.y - p[j].r.y - height) < abs(deltay))
@@ -249,7 +242,7 @@ void update_force(particle_list &p)
 				scalar Fy = F * deltay / r;
 
 				p[i].F += vec(-Fx, -Fy);
-				p[j].F += vec(Fx, Fy);
+				p[j].F += vec(+Fx, +Fy);
 			}
 		}
 	}
