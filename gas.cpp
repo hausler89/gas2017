@@ -112,8 +112,6 @@ int main()
 		scalar x = scalar(pos_x) / scalar(grid_w) * (width - 2 * pot_size) + pot_size;
 		scalar y = scalar(pos_y) / scalar(grid_h + 1) * height;
 
-		//cout << x << " " << y << endl;
-
 		p[i].r = vec(x, y);
 		p[i].v = vec(sin(r_phi) * r_v, cos(r_phi) * r_v);
 	}
@@ -125,13 +123,12 @@ int main()
 	update_force(p);
 
 	// Verlet integration
-	bool integrate = true;
 	try
 	{
-		while (T < 10)
+		while (T < 20)
 		{
 
-			if (T_diag > 1000 * dt)
+			if (T_diag > 10000 * dt)
 			{
 				T_diag = 0;
 				cout << p[0].r.x << "\t" << p[0].r.y << endl;
@@ -161,13 +158,12 @@ int main()
 			}
 
 			update_force(p);
-			//limit_force(p, 0.5 * 2 * pot_size / (dt * dt));
+
 			for (auto &i : p)
 				i.v += 0.5 * dt * (i.F + i.pF);
 
 			T += dt;
 			T_diag += dt;
-			integrate = false;
 		}
 	}
 	catch (int e)
@@ -224,6 +220,8 @@ void update_force(particle_list &p)
 
 		for (size_t j = i + 1; j < p.size(); ++j)
 		{
+			
+			//__builtin_prefetch (&p[i+1], 1, 1);
 
 			scalar deltax = p[i].r.x - p[j].r.x;
 			scalar deltay = p[i].r.y - p[j].r.y;
