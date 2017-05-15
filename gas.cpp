@@ -3,6 +3,7 @@
 #include <cmath>
 #include <ctime>
 #include <fstream>
+#include <curses.h>
 
 using namespace std;
 
@@ -31,6 +32,7 @@ const scalar dt = 1e-4;
 // Function declarations
 void update_force(particle_list &);
 inline scalar lennard_jones(scalar);
+void draw_particles(const particle_list&);
 // void limit_force(particle_list &, scalar);
 // void limit_velocity(particle_list &, scalar);
 
@@ -94,6 +96,19 @@ struct particle
 
 int main()
 {
+
+	// Init Ncurses screen
+	initscr();	 // Create curses window
+	start_color(); // Use color output
+	curs_set(0);   // Hide cursor
+
+	// Define some color schemes
+	init_pair(1, COLOR_WHITE, COLOR_BLACK); // Text
+	init_pair(2, COLOR_WHITE, COLOR_RED);   // Planets
+	init_pair(3, COLOR_GREEN, COLOR_BLACK); // Trails
+
+	// Set output to bold to get foreground colors
+	attron(A_BOLD);
 	srand(time(NULL));
 
 	particle_list p(N);
@@ -127,10 +142,15 @@ int main()
 		while (T < 20)
 		{
 
-			if (T_diag > 10000 * dt)
+			if (T_diag > 10 * dt)
 			{
 				T_diag = 0;
-				cout << p[0].r.x << "\t" << p[0].r.y << endl;
+
+				draw_particles(p);
+				// mvprintw(0, 0, "HALLO");
+				// mvprintw(0, 0, "%e \t %e", p[0].r.x, p[0].r.y);
+				// cout << p[0].r.x << "\t" << p[0].r.y << endl;
+				refresh();
 			}
 
 			//limit_force(p, 0.5 * 2 * pot_size / (dt * dt));
@@ -175,6 +195,7 @@ int main()
 			cout << "Particle left boundary" << endl;
 		}
 	}
+	endwin();
 }
 
 // Recalculate the forces acting on the particles.
@@ -277,4 +298,27 @@ inline scalar lennard_jones(scalar d)
 	}
 	else
 		return 0;
+}
+
+void draw_particles(const particle_list &p)
+{
+	
+	// Get screen size
+    int screen_x, screen_y;
+    getmaxyx(stdscr, screen_y, screen_x);
+	clear();
+	for(auto i:p)
+	{
+
+		double x_rel = i.r.x / width; // Relative position according to fov
+        double y_rel = i.r.y / height;
+
+		int pos_x = x_rel * screen_x;
+        int pos_y = y_rel * screen_y;
+
+		mvaddch(pos_y, pos_x, 'p');
+
+	}
+
+
 }
