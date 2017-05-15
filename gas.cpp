@@ -4,6 +4,7 @@
 #include <ctime>
 #include <fstream>
 #include <curses.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -16,14 +17,14 @@ typedef vector<particle> particle_list;
 // System parameters
 const size_t N = 100;
 const scalar box_cutoff = 1.1225;
-const scalar pot_size = pow(2, 1. / 6.);
+const scalar pot_size = 1*pow(2, 1. / 6.);
 const scalar height = 6.;
 const scalar width = 10.;
 
 const int grid_h = 9;
 const int grid_w = 12;
 
-const scalar velocity_max = 1;
+const scalar velocity_max = 100;
 
 const scalar pot_size6 = 2;
 
@@ -142,15 +143,13 @@ int main()
 		while (T < 20)
 		{
 
-			if (T_diag > 10 * dt)
+			if (T_diag > 1 * dt)
 			{
 				T_diag = 0;
 
 				draw_particles(p);
-				// mvprintw(0, 0, "HALLO");
-				// mvprintw(0, 0, "%e \t %e", p[0].r.x, p[0].r.y);
-				// cout << p[0].r.x << "\t" << p[0].r.y << endl;
 				refresh();
+				usleep(10000);
 			}
 
 			//limit_force(p, 0.5 * 2 * pot_size / (dt * dt));
