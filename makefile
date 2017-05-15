@@ -1,7 +1,7 @@
 NAME = GAS
 CC = g++
 
-CFLAGS = -std=gnu++14 -Ofast -c -Wall -g
+CFLAGS = -std=gnu++14 -O0 -c -Wall -g
 LFLAGS = -std=gnu++14 -g
 
 #------------------------------------------------------------------------------
