@@ -2,11 +2,11 @@ NAME = GAS
 CC = g++
 
 CFLAGS = -std=gnu++14 -Ofast -c -Wall
-LFLAGS = -std=gnu++14 -lncurses
+LFLAGS = -std=gnu++14 -Ofast -lncurses
 
 #------------------------------------------------------------------------------
-SOURCE = gas.cpp
-OBJECT = gas.o
+SOURCE = gas.cpp vec.cpp force.cpp gui.cpp
+OBJECT = gas.o vec.o force.o gui.o
 
 #------------------------------------------------------------------------------
 $(NAME):$(OBJECT)

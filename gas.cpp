@@ -5,111 +5,36 @@
 #include <fstream>
 #include <curses.h>
 #include <unistd.h>
+#include "common.h"
+#include "vec.h"
+#include "particle.h"
+#include "gui.h"
 
 using namespace std;
 
-// Type declarations
-struct vec;
-struct particle;
-typedef double scalar;
-typedef vector<particle> particle_list;
-
 // System parameters
-const size_t N = 100;
-const scalar box_cutoff = 1.1225;
-const scalar pot_size = 1*pow(2, 1. / 6.);
-const scalar height = 6.;
-const scalar width = 10.;
+extern const size_t N = 100;
+extern const scalar box_cutoff = 1.1225;
+extern const scalar pot_size = 1 * pow(2, 1. / 6.);
+extern const scalar pot_size6 = 2;
+extern const scalar height = 6.;
+extern const scalar width = 10.;
 
-const int grid_h = 9;
-const int grid_w = 12;
+extern const int grid_h = 9;
+extern const int grid_w = 12;
 
-const scalar velocity_max = 100;
-
-const scalar pot_size6 = 2;
-
-const scalar dt = 1e-4;
+extern const scalar velocity_max = 100;
+extern const scalar dt = 1e-4;
 
 // Function declarations
 void update_force(particle_list &);
 inline scalar lennard_jones(scalar);
-void draw_particles(const particle_list&);
-// void limit_force(particle_list &, scalar);
-// void limit_velocity(particle_list &, scalar);
-
-// Definitions
-
-// Basic 2D vector. Uses standard copy constructor
-struct vec
-{
-	scalar x;
-	scalar y;
-
-	// Simple constructor initializing with zeroes
-	vec()
-	{
-		x = 0;
-		y = 0;
-	}
-
-	// Constructor with custom initializations
-	vec(scalar ix, scalar iy)
-	{
-		x = ix;
-		y = iy;
-	}
-
-	// Define the '+'-operator for vectors
-	vec operator+(const vec &rhs)
-	{
-		return vec(x + rhs.x, y + rhs.y);
-	}
-	vec &operator+=(const vec &rhs)
-	{
-		x += rhs.x;
-		y += rhs.y;
-		return *this;
-	}
-};
-
-// Multiplication of vector with scalar
-vec operator*(const scalar &lhs, const vec &rhs)
-{
-	return vec(lhs * rhs.x, lhs * rhs.y);
-}
-
-// A particle, containing position, velocity and a force acting on it
-struct particle
-{
-	vec r;
-	vec v;
-	vec F;
-
-	void shout()
-	{
-		cout << "I'm a particle @ x = " << r.x << ", y = " << r.y << endl;
-	}
-
-	// Previous force, as temp variable needed for the verlet algorithm
-	// Is written by the 'update_force' function.
-	vec pF;
-};
+void draw_particles(const particle_list &);
 
 int main()
 {
+	init_gui();
 
-	// Init Ncurses screen
-	initscr();	 // Create curses window
-	start_color(); // Use color output
-	curs_set(0);   // Hide cursor
-
-	// Define some color schemes
-	init_pair(1, COLOR_WHITE, COLOR_BLACK); // Text
-	init_pair(2, COLOR_WHITE, COLOR_RED);   // Planets
-	init_pair(3, COLOR_GREEN, COLOR_BLACK); // Trails
-
-	// Set output to bold to get foreground colors
-	attron(A_BOLD);
 	srand(time(NULL));
 
 	particle_list p(N);
@@ -195,129 +120,4 @@ int main()
 		}
 	}
 	endwin();
-}
-
-// Recalculate the forces acting on the particles.
-// Will backup the previous force to the pV member of the particles.
-void update_force(particle_list &p)
-{
-	// Backup the force and calculate the wall repulsion
-	for (auto &i : p)
-	{
-		i.pF = i.F;
-
-		scalar d;
-
-		bool within_reach = false;
-		scalar force_direction = 0;
-
-		if (i.r.x < box_cutoff)
-		{
-			d = i.r.x;
-			within_reach = true;
-			force_direction = 1;
-		}
-		else if (i.r.x > width - box_cutoff)
-		{
-			d = width - i.r.x;
-			within_reach = true;
-			force_direction = -1;
-		}
-
-		if (within_reach)
-		{
-			scalar F_wall = lennard_jones(d);
-			i.F = vec(-F_wall * force_direction, 0);
-		}
-		else
-			i.F = vec(0, 0);
-	}
-
-	// Calculating the forces for all particle combinations
-	for (size_t i = 0; i < p.size() - 1; ++i)
-	{
-
-		for (size_t j = i + 1; j < p.size(); ++j)
-		{
-
-			//__builtin_prefetch (&p[i+1], 1, 1);
-
-			scalar deltax = p[i].r.x - p[j].r.x;
-			scalar deltay = p[i].r.y - p[j].r.y;
-
-			if (abs(p[i].r.y - p[j].r.y - height) < abs(deltay))
-				deltay = p[i].r.y - p[j].r.y - height;
-			else if (abs(p[i].r.y - p[j].r.y + height) < abs(deltay))
-				deltay = p[i].r.y - p[j].r.y + height;
-
-			if (abs(deltax) < box_cutoff && abs(deltay) < box_cutoff)
-			{
-				scalar r = sqrt(deltax * deltax + deltay * deltay);
-				scalar F = lennard_jones(r);
-
-				scalar Fx = F * deltax / r;
-				scalar Fy = F * deltay / r;
-
-				p[i].F += vec(-Fx, -Fy);
-				p[j].F += vec(+Fx, +Fy);
-			}
-		}
-	}
-}
-
-void limit_force(particle_list &p, scalar max_force)
-{
-	for (auto &i : p)
-	{
-		if (abs(i.F.x) > max_force)
-			i.F.x = i.F.x / abs(i.F.x) * max_force;
-
-		if (abs(i.F.y) > max_force)
-			i.F.y = i.F.y / abs(i.F.y) * max_force;
-	}
-}
-
-void limit_velocity(particle_list &p, scalar max_velocity)
-{
-	for (auto &i : p)
-	{
-		if (abs(i.v.x) > max_velocity)
-			i.v.x = i.v.x / abs(i.v.x) * max_velocity;
-
-		if (abs(i.v.y) > max_velocity)
-			i.v.y = i.v.y / abs(i.v.y) * max_velocity;
-	}
-}
-inline scalar lennard_jones(scalar d)
-{
-	if (d < pot_size)
-	{
-		scalar d6 = d * d * d * d * d * d;
-		return 6 * pot_size6 * (d6 - 2 * pot_size6) / (d6 * d6 * d);
-	}
-	else
-		return 0;
-}
-
-void draw_particles(const particle_list &p)
-{
-	
-	// Get screen size
-    int screen_x, screen_y;
-    getmaxyx(stdscr, screen_y, screen_x);
-	clear();
-	for(auto i:p)
-	{
-
-		double x_rel = i.r.x / width; // Relative position according to fov
-        double y_rel = i.r.y / height;
-
-		int pos_x = x_rel * screen_x;
-        int pos_y = y_rel * screen_y;
-
-		mvaddch(pos_y, pos_x, 'p');
-
-	}
-
-
 }
