@@ -25,3 +25,7 @@ new: clean $(NAME)
 
 run: $(NAME)
 	./$(NAME)
+
+#------------------------------------------------------------------------------
+graphics: CFLAGS += -DUSE_GUI
+graphics: clean $(NAME)

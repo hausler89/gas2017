@@ -13,12 +13,14 @@
 
 using namespace std;
 
-// SYSTEM PARAMETERS
+// COMPILE TIME FLAGS
 
 // if USE_GUI is defined, the domain will be rendered with
 // ncurses. Comment this line to disable this feature.
-
+// Compiling with 'make graphics' will also set the variable.
 // #define USE_GUI
+
+// SYSTEM PARAMETERS
 
 // Particle count
 extern const size_t N = 100;
@@ -28,7 +30,7 @@ extern const scalar dt = 1e-4;
 
 // Information or screen refreshes come in these intervals
 #ifdef USE_GUI
-const scalar T_diag_max = 1 * dt;
+const scalar T_diag_max = 2 * dt;
 #else
 const scalar T_diag_max = 1;
 #endif
