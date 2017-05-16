@@ -17,7 +17,7 @@ using namespace std;
 
 // if USE_GUI is defined, the domain will be rendered with
 // ncurses. Comment this line to disable this feature.
-// Compiling with 'make graphics' will also set the variable.
+// Compiling with 'make gfx' will also set the variable.
 // #define USE_GUI
 
 // SYSTEM PARAMETERS
@@ -137,7 +137,7 @@ int main()
 
 #ifndef USE_GUI
 				// Output current time to the terminal
-				cout << "time: " << T << endl;
+				cout << "simulation time: " << T << endl;
 #endif
 			}
 
