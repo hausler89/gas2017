@@ -53,8 +53,6 @@ extern const int grid_w = 12;
 // Maximum initial velocity
 extern const scalar velocity_max = 100;
 
-// Function declarations
-
 int main()
 {
 
