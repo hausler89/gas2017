@@ -15,11 +15,23 @@ using namespace std;
 
 // SYSTEM PARAMETERS
 
+// if USE_GUI is defined, the domain will be rendered with
+// ncurses. Comment this line to disable this feature.
+
+// #define USE_GUI
+
 // Particle count
 extern const size_t N = 100;
 
 // Step size for integration
 extern const scalar dt = 1e-4;
+
+// Information or screen refreshes come in these intervals
+#ifdef USE_GUI
+const scalar T_diag_max = 1 * dt;
+#else
+const scalar T_diag_max = 1;
+#endif
 
 // Maximum distance for force calculation
 extern const scalar box_cutoff = 1.1225;
@@ -39,13 +51,15 @@ extern const int grid_w = 12;
 // Maximum initial velocity
 extern const scalar velocity_max = 100;
 
-
 // Function declarations
 
 int main()
 {
+
+#ifdef USE_GUI
 	// Initialize ncurses window
 	init_gui();
+#endif
 
 	// Seed the RNG
 	srand(time(NULL));
@@ -86,8 +100,8 @@ int main()
 	scalar T = 0;
 
 	// Diagnostic time
-	// After this timer reached a certain value,
-	// diagnostic information or screen redraws will be issue
+	// After this timer reached a certain value (T_diag_max),
+	// diagnostic information or screen redraws will be issued
 	// and the timer will be reset.
 	scalar T_diag = 0;
 
@@ -103,11 +117,12 @@ int main()
 		while (T < 20)
 		{
 			// Is it time for a screen refresh again?
-			if (T_diag > 1 * dt)
+			if (T_diag > T_diag_max)
 			{
 				// Reset diagnostic timer
 				T_diag = 0;
 
+#ifdef USE_GUI
 				// Draw the particles to the screen
 				draw_particles(p);
 
@@ -116,6 +131,12 @@ int main()
 
 				// Wait for a little bit, to keep fps to peasant levels
 				usleep(10000);
+#endif
+
+#ifndef USE_GUI
+				// Output current time to the terminal
+				cout << "time: " << T << endl;
+#endif
 			}
 
 			// Step 1: Update all particle positions (drift)
@@ -176,7 +197,8 @@ int main()
 		}
 		}
 	}
-
+#ifdef USE_GUI
 	// Terminate the curses window
 	endwin();
+#endif
 }
