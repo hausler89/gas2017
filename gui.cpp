@@ -31,7 +31,6 @@ void init_gui()
 
 void draw_particles(const particle_list &p)
 {
-
     // Get screen size
     int screen_x, screen_y;
     getmaxyx(stdscr, screen_y, screen_x);
