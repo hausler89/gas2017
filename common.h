@@ -12,6 +12,9 @@ extern const scalar pot_size6;
 extern const scalar height;
 extern const scalar width;
 
+extern const int num_boxes_x;
+extern const int num_boxes_y;
+
 extern const int grid_h;
 extern const int grid_w;
 

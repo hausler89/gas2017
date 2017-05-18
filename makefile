@@ -5,8 +5,8 @@ CFLAGS = -std=gnu++14 -Ofast -c -Wall
 LFLAGS = -std=gnu++14 -Ofast -lncurses
 
 #------------------------------------------------------------------------------
-SOURCE = gas.cpp vec.cpp force.cpp gui.cpp
-OBJECT = gas.o vec.o force.o gui.o
+SOURCE = gas.cpp vec.cpp force.cpp gui.cpp dispatch.cpp
+OBJECT = gas.o vec.o force.o gui.o dispatch.o
 
 #------------------------------------------------------------------------------
 $(NAME):$(OBJECT)

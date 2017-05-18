@@ -9,6 +9,7 @@
 #include "vec.h"
 #include "particle.h"
 #include "gui.h"
+#include "dispatch.h"
 
 using namespace std;
 
@@ -16,7 +17,7 @@ void init_gui()
 {
 
 	// Init Ncurses screen
-	initscr();     // Create curses window
+	initscr();	 // Create curses window
 	start_color(); // Use color output
 	curs_set(0);   // Hide cursor
 
@@ -34,7 +35,7 @@ void draw_particles(const particle_list &p)
 	// Get screen size
 	int screen_x, screen_y;
 	getmaxyx(stdscr, screen_y, screen_x);
-	clear();
+	//clear();
 	for (auto i : p)
 	{
 
@@ -44,6 +45,8 @@ void draw_particles(const particle_list &p)
 		int pos_x = x_rel * screen_x;
 		int pos_y = y_rel * screen_y;
 
-		mvaddch(pos_y, pos_x, 'p');
+		char id = '0' + coord2id(i.r.x, i.r.y);
+
+		mvaddch(pos_y, pos_x, id);
 	}
 }

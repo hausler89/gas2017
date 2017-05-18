@@ -53,6 +53,10 @@ extern const int grid_w = 12;
 // Maximum initial velocity
 extern const scalar velocity_max = 100;
 
+// Calculation box count (for parallelism)
+extern const int num_boxes_x = int(width / box_cutoff);
+extern const int num_boxes_y = int(height / box_cutoff);
+
 int main()
 {
 
@@ -67,6 +71,9 @@ int main()
 	// Create a list of particles
 	// particle_list is a vector of particles
 	particle_list p(N);
+
+	// Create a list of ids that indicates in which box a particle is in.
+	vector<char> box(N);
 
 	// Init the particles
 	for (size_t i = 0; i < N; ++i)
