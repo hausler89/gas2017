@@ -652,6 +652,8 @@ struct Dispatcher
 				// pushed to the job list
 				job new_job;
 				new_job.origin = vec2id(A);
+				// Add the job to this phase's list
+				jobs[current_phase].push_back(new_job);
 			}
 		}
 
