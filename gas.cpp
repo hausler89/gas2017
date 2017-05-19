@@ -54,8 +54,8 @@ extern const int grid_w = 12;
 extern const scalar velocity_max = 100;
 
 // Calculation box count (for parallelism)
-extern const int num_boxes_x = int(width / box_cutoff);
-extern const int num_boxes_y = int(height / box_cutoff);
+extern const int num_boxes_x = int(width / box_cutoff) + 1;
+extern const int num_boxes_y = int(height / box_cutoff) + 1;
 
 int main()
 {
