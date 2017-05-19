@@ -600,5 +600,8 @@ struct Dispatcher
 				new_job.origin = vec2id(A);
 			}
 		}
+
+		// Initialize the dispatcher for first use
+		reset();
 	}
 };

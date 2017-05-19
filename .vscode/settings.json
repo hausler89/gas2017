@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "ostream": "cpp",
+        "cstdlib": "cpp",
+        "cmath": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp",
+        "ios": "cpp",
+        "iosfwd": "cpp",
+        "type_traits": "cpp",
+        "xutility": "cpp"
+    }
+}
