@@ -7,7 +7,7 @@ using namespace std;
 
 // Recalculate the forces acting on the particles.
 // Will backup the previous force to the pV member of the particles.
-void update_force(particle_list &p)
+void update_force(particle_list &p, const vector<char> box)
 {
 	// Backup the force and calculate the wall repulsion
 	// This loop will initialize the force!

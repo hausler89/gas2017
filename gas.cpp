@@ -5,12 +5,13 @@
 #include <fstream>
 #include <curses.h>
 #include <unistd.h>
-#include "common.h"
 #include "vec.h"
 #include "particle.h"
 #include "gui.h"
 #include "force.h"
 #include "Dispatcher.h"
+#include "dispatch.h"
+#include "common.h"
 
 using namespace std;
 
@@ -58,7 +59,7 @@ extern const scalar velocity_max = 100;
 extern const int num_boxes_x = int(width / box_cutoff) + 1;
 extern const int num_boxes_y = int(height / box_cutoff) + 1;
 
-Dispatcher D;
+extern Dispatcher D;
 
 int main()
 {
@@ -68,17 +69,17 @@ int main()
 	init_gui();
 #endif
 
-	cout << "boxes: " << num_boxes_x * num_boxes_y << endl;
-	do
-	{
-		while (D.jobs_available())
-		{
-			job J = D.get_next_job();
-			cout << int(J.origin) << endl;
-		}
-	} while (D.advance_phase());
+	// cout << "boxes: " << num_boxes_x * num_boxes_y << endl;
+	// do
+	// {
+	// 	while (D.jobs_available())
+	// 	{
+	// 		job J = D.get_next_job();
+	// 		cout << int(J.origin) << endl;
+	// 	}
+	// } while (D.advance_phase());
 
-	return 0;
+	// return 0;
 
 	// Seed the RNG
 	srand(time(NULL));
@@ -112,11 +113,14 @@ int main()
 
 		// Set position
 		p[i].r = vec(x, y);
+
+		// Init the box id's for all particles
+		box[i] = coord2id(x, y);
 	}
 
 	// Update the force once, so that the first verlet step
 	// has something to work with
-	update_force(p);
+	update_force(p, box);
 
 	// Physical time, increased by the simulation loop
 	scalar T = 0;
@@ -162,8 +166,9 @@ int main()
 			}
 
 			// Step 1: Update all particle positions (drift)
-			for (auto &i : p)
+			for (size_t part = 0; part < p.size(); ++part)
 			{
+				particle &i = p[part];
 				// Drift
 				i.r += dt * i.v + 0.5 * dt * dt * i.F;
 
@@ -188,7 +193,7 @@ int main()
 			}
 
 			// Step 2: Update particle forces
-			update_force(p);
+			update_force(p, box);
 
 			// Step 3: Update the particles' velocities (kick)
 			// pF denotes the force from the last step, prior

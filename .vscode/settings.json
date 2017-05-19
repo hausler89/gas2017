@@ -8,6 +8,7 @@
         "ios": "cpp",
         "iosfwd": "cpp",
         "type_traits": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "xlocale": "cpp"
     }
 }
