@@ -20,6 +20,3 @@ extern const int grid_w;
 
 extern const scalar velocity_max;
 extern const scalar dt;
-
-struct Dispatcher;
-extern Dispatcher D;

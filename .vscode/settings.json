@@ -9,6 +9,10 @@
         "iosfwd": "cpp",
         "type_traits": "cpp",
         "xutility": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "system_error": "cpp",
+        "xiosbase": "cpp",
+        "xstring": "cpp",
+        "*.tcc": "cpp"
     }
 }

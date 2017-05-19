@@ -32,7 +32,7 @@ extern const scalar dt = 1e-4;
 
 // Information or screen refreshes come in these intervals
 #ifdef USE_GUI
-const scalar T_diag_max = 2 * dt;
+const scalar T_diag_max = 1 * dt;
 #else
 const scalar T_diag_max = 1;
 #endif
@@ -59,10 +59,12 @@ extern const scalar velocity_max = 100;
 extern const int num_boxes_x = int(width / box_cutoff) + 1;
 extern const int num_boxes_y = int(height / box_cutoff) + 1;
 
-extern Dispatcher D;
+Dispatcher D;
 
 int main()
 {
+
+	D = Dispatcher();
 
 #ifdef USE_GUI
 	// Initialize ncurses window
@@ -143,7 +145,7 @@ int main()
 		while (T < 20)
 		{
 			// Is it time for a screen refresh again?
-			if (T_diag > T_diag_max)
+			if (true || T_diag > T_diag_max)
 			{
 				// Reset diagnostic timer
 				T_diag = 0;
@@ -156,7 +158,7 @@ int main()
 				refresh();
 
 				// Wait for a little bit, to keep fps to peasant levels
-				usleep(10000);
+				usleep(100000);
 #endif
 
 #ifndef USE_GUI
@@ -171,6 +173,9 @@ int main()
 				particle &i = p[part];
 				// Drift
 				i.r += dt * i.v + 0.5 * dt * dt * i.F;
+
+				// Update the box
+				box[part] = coord2id(i.r.x, i.r.y);
 
 				// Test for NaN in the position
 				if (isnan(i.r.y) || isnan(i.r.x))
