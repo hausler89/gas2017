@@ -203,6 +203,31 @@ struct Dispatcher
 
 				bool periodic = (A.y == 0);
 
+				if (periodic)
+				{
+					//Lower S
+					walk_down_periodic(A);
+					walk_down_periodic(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					// Lower SW
+					walk_left(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					//Lower SE
+					walk_right(A);
+					walk_right(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					// Back to origin
+					walk_left(A);
+					walk_up_periodic(A);
+					walk_up_periodic(A);
+				}
+
 				// N
 				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
@@ -243,6 +268,10 @@ struct Dispatcher
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
+				// If we're at the top of the domain we need to check an additional
+				// layer of boxes, since the first one is probably too small for the
+				// interaction
+
 				// Back to origin
 				periodic ? walk_down_periodic(A) : walk_down(A);
 				walk_right(A);
@@ -267,14 +296,39 @@ struct Dispatcher
 			// ignore him for now. He might walk back into the domain later
 			if (valid_id(A))
 			{
-				
+
 				// Create a new job that will be initialized and then
 				// pushed to the job list
 				job new_job;
 				new_job.origin = vec2id(A);
-				bool periodic = A.y == 0;
+				bool periodic = (A.y == 0);
 				// Now we walk around the origin and add the box to the
 				// job if its valid.
+
+				if (periodic)
+				{
+					//Lower S
+					walk_down_periodic(A);
+					walk_down_periodic(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					// Lower SW
+					walk_left(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					//Lower SE
+					walk_right(A);
+					walk_right(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					// Back to origin
+					walk_left(A);
+					walk_up_periodic(A);
+					walk_up_periodic(A);
+				}
 
 				// N
 				periodic ? walk_up_periodic(A) : walk_up(A);
@@ -343,9 +397,34 @@ struct Dispatcher
 				// pushed to the job list
 				job new_job;
 				new_job.origin = vec2id(A);
-				bool periodic = A.y == 0;
+				bool periodic = (A.y == 0);
 				// Now we walk around the origin and add the box to the
 				// job if its valid.
+
+				if (periodic)
+				{
+					//Lower S
+					walk_down_periodic(A);
+					walk_down_periodic(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					// Lower SW
+					walk_left(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					//Lower SE
+					walk_right(A);
+					walk_right(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					// Back to origin
+					walk_left(A);
+					walk_up_periodic(A);
+					walk_up_periodic(A);
+				}
 
 				// N
 				periodic ? walk_up_periodic(A) : walk_up(A);
@@ -382,6 +461,29 @@ struct Dispatcher
 				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
+
+				if (periodic)
+				{
+					//Upper NW
+					walk_up_periodic(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					//Upper N
+					walk_right(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					//Upper NE
+					walk_right(A);
+					if (valid_id(A))
+						new_job.add_id(vec2id(A));
+
+					// Back to the previous position
+					walk_left(A);
+					walk_left(A);
+					walk_down_periodic(A);
+				}
 
 				// Back to origin
 				periodic ? walk_down_periodic(A) : walk_down(A);

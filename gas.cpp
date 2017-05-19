@@ -20,7 +20,7 @@ using namespace std;
 // if USE_GUI is defined, the domain will be rendered with
 // ncurses. Comment this line to disable this feature.
 // Compiling with 'make gfx' will also set the variable.
-#define USE_GUI
+// #define USE_GUI
 
 // SYSTEM PARAMETERS
 
@@ -157,7 +157,7 @@ int main()
 				refresh();
 
 				// Wait for a little bit, to keep fps to peasant levels
-				usleep(100000);
+				usleep(10000);
 #endif
 
 #ifndef USE_GUI
