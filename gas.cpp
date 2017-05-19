@@ -145,7 +145,7 @@ int main()
 		while (T < 20)
 		{
 			// Is it time for a screen refresh again?
-			if (true || T_diag > T_diag_max)
+			if (T_diag > T_diag_max)
 			{
 				// Reset diagnostic timer
 				T_diag = 0;

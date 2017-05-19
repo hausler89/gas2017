@@ -187,7 +187,6 @@ inline scalar lennard_jones(scalar d)
 
 int next_origin(int i0, const vector<char> &box, job J)
 {
-
 	for (int i = i0 + 1; i < int(box.size()); ++i)
 		if (box[i] == J.origin)
 			return i;
