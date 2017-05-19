@@ -240,6 +240,8 @@ struct Dispatcher
 
 				// W (SPARED)
 				walk_up(A);
+				if (valid_id(A))
+					new_job.add_id(vec2id(A));
 
 				// NW
 				walk_up(A);
@@ -527,7 +529,6 @@ struct Dispatcher
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
-
 				// Back to origin
 				walk_right(A);
 
@@ -535,7 +536,6 @@ struct Dispatcher
 				jobs[current_phase].push_back(new_job);
 			}
 		}
-
 
 		// 8th phase, only E.
 		current_phase = 7;
@@ -567,7 +567,6 @@ struct Dispatcher
 				walk_right(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
-
 
 				// Back to origin
 				walk_left(A);

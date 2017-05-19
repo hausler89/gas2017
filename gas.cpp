@@ -68,8 +68,38 @@ int main()
 	init_gui();
 #endif
 
-	return 0;
+	/*int TEST[num_boxes_x * num_boxes_y * num_boxes_x * num_boxes_y];
 
+	for (int i = 0; i < num_boxes_x * num_boxes_y * num_boxes_x * num_boxes_y; ++i)
+	{
+		TEST[i] = 0;
+	}
+
+	for (int ph = 0; ph < 9; ++ph)
+	{
+		for (int j = 0; j < int(D.jobs[ph].size()); ++j)
+		{
+			TEST[D.jobs[ph][j].origin * (num_boxes_x * num_boxes_y + 1)] += 1;
+			for (int k = 0; k < int(D.jobs[ph][j].id.size()); ++k)
+			{
+
+				TEST[int(D.jobs[ph][j].origin) + num_boxes_x * num_boxes_y * int(D.jobs[ph][j].id[k])] += 1;
+
+				// cout << "ph: " << ph << " o:" << int(D.jobs[ph][j].origin) << " i: " << int(D.jobs[ph][j].id[k]) << endl;
+			}
+		}
+	}
+
+	for (int i = 0; i < num_boxes_x * num_boxes_y; ++i)
+	{
+		for (int j = 0; j < num_boxes_x * num_boxes_y; ++j)
+		{
+			cout << char(' ' + TEST[j + i * num_boxes_x * num_boxes_y] + TEST[i + j * num_boxes_x * num_boxes_y]);
+		}
+		cout << endl;
+	}
+	return 0;
+*/
 	// Seed the RNG
 	srand(time(NULL));
 
