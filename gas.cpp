@@ -158,7 +158,7 @@ int main()
 				refresh();
 
 				// Wait for a little bit, to keep fps to peasant levels
-				usleep(100000);
+				usleep(10000);
 #endif
 
 #ifndef USE_GUI

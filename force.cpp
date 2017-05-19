@@ -78,9 +78,6 @@ void update_force(particle_list &p, const vector<char> box)
 			// Get the first i1 particle (origin)
 			i1 = next_origin(-1, box, J);
 
-			// Get the first i2 particle (any of the 3x3 subdomain)
-			i2 = next_particle(-1, box, J);
-
 			// Simulation runs as long as there are particles in the central
 			// box. Check wether we have a particle at all.
 			bool origins_left = true;
@@ -108,7 +105,7 @@ void update_force(particle_list &p, const vector<char> box)
 
 					bool calculate = true;
 
-					if (i2 == J.origin && i2 <= i1)
+					if (box[i2] == J.origin && i2 <= i1)
 						calculate = false;
 
 					// Get the next particle already, so we can prefetch the memory before
@@ -117,7 +114,6 @@ void update_force(particle_list &p, const vector<char> box)
 
 					if (calculate)
 					{
-
 						// Displacement "vector" from p[i] to p[j]
 						scalar deltax = p[i1].r.x - p[i2].r.x;
 						scalar deltay = p[i1].r.y - p[i2].r.y;
@@ -150,7 +146,7 @@ void update_force(particle_list &p, const vector<char> box)
 							p[i1].F += vec(-Fx, -Fy);
 							p[i2].F += vec(+Fx, +Fy);
 						}
-					} // Enf of if(calculate)
+					} // End of if(calculate)
 
 					// Set i2 to the next particle and check wether it exists
 					if (i2_next < 0)
@@ -201,7 +197,6 @@ int next_origin(int i0, const vector<char> &box, job J)
 
 int next_particle(int i0, const vector<char> &box, job J)
 {
-
 	for (int i = i0 + 1; i < int(box.size()); ++i)
 	{
 		if (box[i] == J.origin)
