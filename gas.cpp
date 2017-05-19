@@ -68,6 +68,8 @@ int main()
 	init_gui();
 #endif
 
+	return 0;
+
 	// Seed the RNG
 	srand(time(NULL));
 

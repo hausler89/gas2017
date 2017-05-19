@@ -1,4 +1,5 @@
 #include "common.h"
+#include <iostream>
 #include <vector>
 #include "job.h"
 
@@ -37,6 +38,59 @@ struct Dispatcher
 
 	// Jobs of this phase
 	vector<job> jobs[9];
+
+	// Reset the dispatcher to the beginning
+	void reset()
+	{
+		current_phase = 0;
+
+		for (int ph = 0; ph < 9; ++ph)
+		{
+			number_of_jobs[ph] = jobs[ph].size();
+			handed_out_jobs[ph] = 0;
+		}
+	}
+
+	// Check wether there are jobs left in the current phase
+	bool jobs_available()
+	{
+		if (handed_out_jobs[current_phase] < number_of_jobs[current_phase])
+			return true;
+		else
+			return false;
+	}
+
+	// Get the next undone job in the current phase
+	job get_next_job()
+	{
+		if (handed_out_jobs[current_phase] == number_of_jobs[current_phase])
+		{
+			cerr << "You've requested a job when there was none left" << endl;
+			throw 1000;
+		}
+		else
+		{
+			return jobs[current_phase][handed_out_jobs[current_phase]++];
+		}
+	}
+
+	// Try to go to the next phase, and report back if this was succesful,
+	// or if we already did all jobs.
+	bool advance_phase()
+	{
+		if(jobs_available())
+		{
+			cerr << "Cant advance phase, jobs left undone..." << endl;
+			throw 1002;
+		}
+		if(current_phase == 8)
+			return false;
+		else
+		{
+			current_phase++;
+			return true;
+		}
+	}
 
 	// Convert box coordinates to box id
 	int vec2id(id_vec v)
