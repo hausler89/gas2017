@@ -6,6 +6,7 @@ LFLAGS = -std=gnu++14 -Ofast -lncurses
 
 #------------------------------------------------------------------------------
 SOURCE = gas.cpp vec.cpp force.cpp gui.cpp dispatch.cpp
+HEADER = common.h dispatch.h Dispatcher.h force.h gui.h job.h particle.h vec.h
 OBJECT = gas.o vec.o force.o gui.o dispatch.o
 
 #------------------------------------------------------------------------------

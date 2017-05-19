@@ -5,7 +5,10 @@ using namespace std;
 
 struct job
 {
-    // Boxes that need to be calculated
+    // Center cell that is the origin of all calculations
+    char origin;
+
+    // Boxes that interact with the origin.
     vector<char> id;
 
     // Insert a box to this job

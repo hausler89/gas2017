@@ -10,6 +10,7 @@
 #include "particle.h"
 #include "gui.h"
 #include "force.h"
+#include "Dispatcher.h"
 
 using namespace std;
 
@@ -57,6 +58,8 @@ extern const scalar velocity_max = 100;
 extern const int num_boxes_x = int(width / box_cutoff) + 1;
 extern const int num_boxes_y = int(height / box_cutoff) + 1;
 
+Dispatcher D;
+
 int main()
 {
 
@@ -64,6 +67,8 @@ int main()
 	// Initialize ncurses window
 	init_gui();
 #endif
+
+	return 0;
 
 	// Seed the RNG
 	srand(time(NULL));
