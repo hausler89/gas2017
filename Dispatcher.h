@@ -157,7 +157,7 @@ struct Dispatcher
 		// List of agents, containin the id he's pointing to
 		vector<id_vec> agent(num_agents);
 
-		// Check if the box coordinates are valid and withing
+		// Check if the box coordinates are valid and within
 		// the simulation domain
 
 		// Initialize the agents
@@ -296,8 +296,6 @@ struct Dispatcher
 
 				// W (SPARED)
 				walk_up(A);
-				if (valid_id(A))
-					new_job.add_id(vec2id(A));
 
 				// NW
 				walk_up(A);
