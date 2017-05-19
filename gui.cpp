@@ -35,7 +35,7 @@ void draw_particles(const particle_list &p)
 	// Get screen size
 	int screen_x, screen_y;
 	getmaxyx(stdscr, screen_y, screen_x);
-	clear();
+	//clear();
 	for (auto i : p)
 	{
 
@@ -45,14 +45,14 @@ void draw_particles(const particle_list &p)
 		int pos_x = x_rel * screen_x;
 		int pos_y = y_rel * screen_y;
 
-		// char id;
-		// id = '0' + coord2id(i.r.x, i.r.y);
+		char id;
+		id = '0' + coord2id(i.r.x, i.r.y);
 		// id = id_edge(coord2id(i.r.x, i.r.y));
 
 		int aInt = i.F.x;
 		char str[15];
 		sprintf(str, "%d", aInt);
-
-		mvprintw(pos_y, pos_x, "p");
+		mvaddch(pos_y, pos_x, id);
+		// mvprintw(pos_y, pos_x, "p");
 	}
 }
