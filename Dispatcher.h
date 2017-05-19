@@ -80,12 +80,12 @@ struct Dispatcher
 	// or if we already did all jobs.
 	bool advance_phase()
 	{
-		if(jobs_available())
+		if (jobs_available())
 		{
 			cerr << "Cant advance phase, jobs left undone..." << endl;
 			throw 1002;
 		}
-		if(current_phase == 8)
+		if (current_phase == 8)
 			return false;
 		else
 		{
@@ -117,11 +117,21 @@ struct Dispatcher
 	void walk_up(id_vec &v)
 	{
 		v.y += 1;
+	}
+
+	void walk_up_periodic(id_vec &v)
+	{
+		v.y += 1;
 		if (v.y >= num_boxes_y)
 			v.y -= num_boxes_y;
 	}
 
 	void walk_down(id_vec &v)
+	{
+		v.y -= 1;
+	}
+
+	void walk_down_periodic(id_vec &v)
 	{
 		v.y -= 1;
 		if (v.y < 0)
@@ -149,7 +159,7 @@ struct Dispatcher
 		// already did before
 
 		int agents_x = int(num_boxes_x / 3) + 1; // Non-periodic boundary
-		int agents_y = int(num_boxes_y / 3);	 // Periodic boundary
+		int agents_y = int(num_boxes_y / 3) + 1; // Periodic boundary
 
 		// Total number of agents
 		int num_agents = agents_x * agents_y;
@@ -191,8 +201,10 @@ struct Dispatcher
 				// Now we walk around the origin and add the box to the
 				// job if its valid.
 
+				bool periodic = (A.y == 0);
+
 				// N
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
@@ -202,12 +214,12 @@ struct Dispatcher
 					new_job.add_id(vec2id(A));
 
 				// E
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
 				// SE
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
@@ -222,17 +234,17 @@ struct Dispatcher
 					new_job.add_id(vec2id(A));
 
 				// W
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
 				// NW
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
 				// Back to origin
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				walk_right(A);
 
 				// Add the job to this phase's list
@@ -255,17 +267,17 @@ struct Dispatcher
 			// ignore him for now. He might walk back into the domain later
 			if (valid_id(A))
 			{
-
+				
 				// Create a new job that will be initialized and then
 				// pushed to the job list
 				job new_job;
 				new_job.origin = vec2id(A);
-
+				bool periodic = A.y == 0;
 				// Now we walk around the origin and add the box to the
 				// job if its valid.
 
 				// N
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
@@ -275,12 +287,12 @@ struct Dispatcher
 					new_job.add_id(vec2id(A));
 
 				// E
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
 				// SE
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
@@ -295,15 +307,15 @@ struct Dispatcher
 					new_job.add_id(vec2id(A));
 
 				// W (SPARED)
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 
 				// NW
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
 				// Back to origin
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				walk_right(A);
 
 				// Add the job to this phase's list
@@ -331,12 +343,12 @@ struct Dispatcher
 				// pushed to the job list
 				job new_job;
 				new_job.origin = vec2id(A);
-
+				bool periodic = A.y == 0;
 				// Now we walk around the origin and add the box to the
 				// job if its valid.
 
 				// N
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
@@ -346,10 +358,10 @@ struct Dispatcher
 					new_job.add_id(vec2id(A));
 
 				// E (SPARED)
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 
 				// SE
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
@@ -364,15 +376,15 @@ struct Dispatcher
 					new_job.add_id(vec2id(A));
 
 				// W (SPARED)
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 
 				// NW
-				walk_up(A);
+				periodic ? walk_up_periodic(A) : walk_up(A);
 				if (valid_id(A))
 					new_job.add_id(vec2id(A));
 
 				// Back to origin
-				walk_down(A);
+				periodic ? walk_down_periodic(A) : walk_down(A);
 				walk_right(A);
 
 				// Add the job to this phase's list

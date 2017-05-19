@@ -49,6 +49,10 @@ void draw_particles(const particle_list &p)
 		// id = '0' + coord2id(i.r.x, i.r.y);
 		// id = id_edge(coord2id(i.r.x, i.r.y));
 
-		mvaddch(pos_y, pos_x, 'p');
+		int aInt = i.F.x;
+		char str[15];
+		sprintf(str, "%d", aInt);
+
+		mvprintw(pos_y, pos_x, "p");
 	}
 }

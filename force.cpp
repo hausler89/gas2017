@@ -90,7 +90,7 @@ void update_force(particle_list &p, const vector<char> box)
 				// Get the next particle
 				i2 = next_particle(-1, box, J);
 
-				// Get the next origin particle alread, so we can prefetch while doing the calculation
+				// Get the next origin particle already, so we can prefetch while doing the calculation
 				int i1_next = next_origin(i1, box, J);
 
 				bool particles_left = true;
@@ -101,8 +101,7 @@ void update_force(particle_list &p, const vector<char> box)
 				{
 					// Check if this is another origin particle. If it is,
 					// then only calculate the force if we didn't do this before
-					// and only if this is not the i1 itself.
-
+					// and only if this is not the i1 particle itself.
 					bool calculate = true;
 
 					if (box[i2] == J.origin && i2 <= i1)
