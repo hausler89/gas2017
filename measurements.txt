@@ -1,19 +1,22 @@
+    time		specific	difference
+				t / (T*N)
+				
 1.000.000 particles T = 0.1 (112 MiB)
-par: 130.02s	0.0013	-45%
+par: 130.02s	0.0013		-45%
 ser: 234.87s	0.0023
 
 100000 particles T = 0.1
-par: 13.88s	0.0014	-31%
-ser: 20.28s	0.0020
+par: 13.88s		0.0014		-31%
+ser: 20.28s		0.0020
 
 10000 particles T=2
-par: 24.71s	0.0012	-35%	
-ser: 37.88s	0.0019
+par: 24.71s		0.0012		-35%	
+ser: 37.88s		0.0019
 
 1000 particles T=20
-par: 46.41s	0.0023	+71%
-ser: 27.29s	0.0014
+par: 46.41s		0.0023		+71%
+ser: 27.29s		0.0014
 
 100 particles T=20
-par: 42.61s	0.0213	+518%
-ser:  6.90s	0.0035
+par: 42.61s		0.0213		+518%
+ser:  6.90s		0.0035
