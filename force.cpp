@@ -9,7 +9,7 @@ extern Dispatcher D;
 
 // Recalculate the forces acting on the particles.
 // Will backup the previous force to the pV member of the particles.
-void update_force(particle_list &p, vector<vector<int>> box)
+void update_force(particle_list &p, vector<vector<int>> &box)
 {
 	bool phases_left;
 #pragma omp parallel
