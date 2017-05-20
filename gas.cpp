@@ -25,7 +25,7 @@ using namespace std;
 // SYSTEM PARAMETERS
 
 // Particle count
-extern const size_t N = 10000;
+extern const size_t N = 10000000;
 
 // Step size for integration
 extern const scalar dt = 1e-4;
@@ -34,23 +34,24 @@ extern const scalar dt = 1e-4;
 #ifdef USE_GUI
 const scalar T_diag_max = 10 * dt;
 #else
-const scalar T_diag_max = 0.05;
+const scalar T_diag_max = 0;
 #endif
 
 // Maximum distance for force calculation
-extern const scalar box_cutoff = 1.1225;
+// extern const scalar box_cutoff = 1.1225;
+extern const scalar box_cutoff = 2;
 
 // Range parameter for Lennard-Jones-Potential
 extern const scalar pot_size = 1 * pow(2, 1. / 6.);
 extern const scalar pot_size6 = 2; // pot_size^6
 
 // Domain size
-extern const scalar height = 80;
-extern const scalar width = 80;
+extern const scalar height = 2700;
+extern const scalar width = 2700;
 
 // Grid of initial positions
-extern const int grid_h = 103;
-extern const int grid_w = 103;
+extern const int grid_h = 3170;
+extern const int grid_w = 3170;
 
 // Maximum initial velocity
 extern const scalar velocity_max = 100;
@@ -144,7 +145,7 @@ int main()
 	try
 	{
 		// Integrate until the system reaches a desired time
-		while (T < 1)
+		while (T < 100*dt)
 		{
 			// Is it time for a screen refresh again?
 			if (T_diag > T_diag_max)
@@ -170,12 +171,12 @@ int main()
 			}
 
 // Remove old ids
-#pragma omp parallel for
+// #pragma omp parallel for
 			for (int i = 0; i < num_boxes; ++i)
 				box[i].clear();
 
 // Step 1: Update all particle positions (drift)
-#pragma omp parallel for
+// #pragma omp parallel for
 			for (size_t part = 0; part < p.size(); ++part)
 			{
 				particle &i = p[part];
@@ -183,7 +184,7 @@ int main()
 				i.r += dt * i.v + 0.5 * dt * dt * i.F;
 
 // Update the boxes
-#pragma omp critical
+// #pragma omp critical
 				{
 					box[coord2id(i.r.x, i.r.y)].push_back(part);
 				}
@@ -213,7 +214,7 @@ int main()
 // Step 3: Update the particles' velocities (kick)
 // pF denotes the force from the last step, prior
 // to the force update
-#pragma omp parallel for
+// #pragma omp parallel for
 			for (size_t part = 0; part < p.size(); ++part)
 			{
 				particle &i = p[part];
