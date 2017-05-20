@@ -5,7 +5,7 @@
 
 using namespace std;
 
-char coord2id(scalar x, scalar y)
+int coord2id(scalar x, scalar y)
 {
     int box_x = int(x / box_cutoff);
     int box_y = int(y / box_cutoff);
@@ -13,7 +13,7 @@ char coord2id(scalar x, scalar y)
     return box_x + box_y * num_boxes_x;
 }
 
-char id_edge(char id)
+int id_edge(int id)
 {
     if (id < num_boxes_x)
         return 'T';

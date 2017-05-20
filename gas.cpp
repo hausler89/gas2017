@@ -25,14 +25,14 @@ using namespace std;
 // SYSTEM PARAMETERS
 
 // Particle count
-extern const size_t N = 100;
+extern const size_t N = 1000;
 
 // Step size for integration
 extern const scalar dt = 1e-4;
 
 // Information or screen refreshes come in these intervals
 #ifdef USE_GUI
-const scalar T_diag_max = 1 * dt;
+const scalar T_diag_max = 10 * dt;
 #else
 const scalar T_diag_max = 1;
 #endif
@@ -45,12 +45,12 @@ extern const scalar pot_size = 1 * pow(2, 1. / 6.);
 extern const scalar pot_size6 = 2; // pot_size^6
 
 // Domain size
-extern const scalar height = 6.;
-extern const scalar width = 10.;
+extern const scalar height = 30.;
+extern const scalar width = 30.;
 
 // Grid of initial positions
-extern const int grid_h = 9;
-extern const int grid_w = 12;
+extern const int grid_h = 32;
+extern const int grid_w = 32;
 
 // Maximum initial velocity
 extern const scalar velocity_max = 100;
@@ -92,7 +92,7 @@ int main()
 	particle_list p(N);
 
 	// Create a list of ids that indicates in which box a particle is in.
-	vector<char> box[num_boxes];
+	vector<vector<int>> box(num_boxes);
 
 	// Init the particles
 	for (size_t i = 0; i < N; ++i)
@@ -117,7 +117,9 @@ int main()
 		// Set position
 		p[i].r = vec(x, y);
 
-		box[coord2id(x, y)].push_back(i);
+		int id = coord2id(x, y);
+
+		box[id].push_back(i);
 	}
 
 	// Update the force once, so that the first verlet step
@@ -158,7 +160,7 @@ int main()
 				refresh();
 
 				// Wait for a little bit, to keep fps to peasant levels
-				usleep(10000);
+				usleep(100000);
 #endif
 
 #ifndef USE_GUI

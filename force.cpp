@@ -9,7 +9,7 @@ extern Dispatcher D;
 
 // Recalculate the forces acting on the particles.
 // Will backup the previous force to the pV member of the particles.
-void update_force(particle_list &p, const vector<char> *box)
+void update_force(particle_list &p, const vector<vector<int>> box)
 {
 	// Backup the force and calculate the wall repulsion
 	// This loop will initialize the force!
@@ -71,6 +71,44 @@ void update_force(particle_list &p, const vector<char> *box)
 
 			for (auto i1 : box[J.origin])
 			{
+				for (auto i2 : box[J.origin])
+				{
+					if (i2 > i1)
+					{
+						// Displacement "vector" from p[i] to p[j]
+						scalar deltax = p[i1].r.x - p[i2].r.x;
+						scalar deltay = p[i1].r.y - p[i2].r.y;
+
+						// Periodic boundaries on north and south wall
+						// Check if the distance to a parallel transported "copy"
+						// of the second planet is shorter. We will only calculate
+						// the force to ONE SINGULAR version of the particle, assuming
+						// that the potential is always smaller than the domain
+						if (abs(p[i1].r.y - p[i2].r.y - height) < abs(deltay))
+							deltay = p[i1].r.y - p[i2].r.y - height;
+						else if (abs(p[i1].r.y - p[i2].r.y + height) < abs(deltay))
+							deltay = p[i1].r.y - p[i2].r.y + height;
+
+						// Make a numerical cheap check if the particles might be able
+						// to interact at all
+						if (abs(deltax) < box_cutoff && abs(deltay) < box_cutoff)
+						{
+							// The distance between the particles
+							scalar r = sqrt(deltax * deltax + deltay * deltay);
+
+							// Magnitude of the force
+							scalar F = lennard_jones(r);
+
+							// Project the force onto the x and y direction
+							scalar Fx = F * deltax / r;
+							scalar Fy = F * deltay / r;
+
+							// Add the forces to the two planets
+							p[i1].F += vec(-Fx, -Fy);
+							p[i2].F += vec(+Fx, +Fy);
+						}
+					}
+				}
 				for (auto id : J.id)
 				{
 					for (auto i2 : box[id])
@@ -131,7 +169,7 @@ inline scalar lennard_jones(scalar d)
 		return 0;
 }
 
-int next_origin(int i0, const vector<char> &box, job J)
+int next_origin(int i0, const vector<int> &box, job J)
 {
 	for (int i = i0 + 1; i < int(box.size()); ++i)
 		if (box[i] == J.origin)
@@ -140,7 +178,7 @@ int next_origin(int i0, const vector<char> &box, job J)
 	return -1;
 }
 
-int next_particle(int i0, const vector<char> &box, job J)
+int next_particle(int i0, const vector<int> &box, job J)
 {
 	for (int i = i0 + 1; i < int(box.size()); ++i)
 	{

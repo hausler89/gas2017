@@ -1,8 +1,8 @@
 NAME = GAS
 CC = g++
 
-CFLAGS = -std=gnu++14 -Ofast -c -Wall -g
-LFLAGS = -std=gnu++14 -Ofast -lncurses -g
+CFLAGS = -std=gnu++14 -Ofast -c -Wall
+LFLAGS = -std=gnu++14 -Ofast -lncurses
 
 #------------------------------------------------------------------------------
 SOURCE = gas.cpp vec.cpp force.cpp gui.cpp dispatch.cpp
