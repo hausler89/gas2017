@@ -17,7 +17,7 @@ void update_force(particle_list &p, vector<vector<int>> &box)
 // Backup the force and calculate the wall repulsion
 // This loop will initialize the force!
 #pragma omp for
-		for (int idx = 0; idx < N; ++idx)
+		for (size_t idx = 0; idx < N; ++idx)
 		{
 			particle &i = p[idx];
 			i.pF = i.F;
