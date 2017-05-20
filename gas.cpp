@@ -20,19 +20,19 @@ using namespace std;
 // if USE_GUI is defined, the domain will be rendered with
 // ncurses. Comment this line to disable this feature.
 // Compiling with 'make gfx' will also set the variable.
-// #define USE_GUI
+#define USE_GUI
 
 // SYSTEM PARAMETERS
 
 // Particle count
-extern const size_t N = 10000000;
+extern const size_t N = 100;
 
 // Step size for integration
-extern const scalar dt = 1e-4;
+extern const scalar dt = 1e-6;
 
 // Information or screen refreshes come in these intervals
 #ifdef USE_GUI
-const scalar T_diag_max = 10 * dt;
+const scalar T_diag_max = 1 * dt;
 #else
 const scalar T_diag_max = 0;
 #endif
@@ -46,12 +46,12 @@ extern const scalar pot_size = 1 * pow(2, 1. / 6.);
 extern const scalar pot_size6 = 2; // pot_size^6
 
 // Domain size
-extern const scalar height = 2700;
-extern const scalar width = 2700;
+extern const scalar height = 5;
+extern const scalar width = 5;
 
 // Grid of initial positions
-extern const int grid_h = 3170;
-extern const int grid_w = 3170;
+extern const int grid_h = 10;
+extern const int grid_w = 10;
 
 // Maximum initial velocity
 extern const scalar velocity_max = 100;
@@ -145,7 +145,7 @@ int main()
 	try
 	{
 		// Integrate until the system reaches a desired time
-		while (T < 100*dt)
+		while (T < 10)
 		{
 			// Is it time for a screen refresh again?
 			if (T_diag > T_diag_max)
@@ -161,7 +161,7 @@ int main()
 				refresh();
 
 				// Wait for a little bit, to keep fps to peasant levels
-				usleep(100000);
+				usleep(10000);
 #endif
 
 #ifndef USE_GUI
