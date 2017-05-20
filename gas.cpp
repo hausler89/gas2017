@@ -25,7 +25,7 @@ using namespace std;
 // SYSTEM PARAMETERS
 
 // Particle count
-extern const size_t N = 1000;
+extern const size_t N = 10000000;
 
 // Step size for integration
 extern const scalar dt = 1e-4;
@@ -34,7 +34,7 @@ extern const scalar dt = 1e-4;
 #ifdef USE_GUI
 const scalar T_diag_max = 10 * dt;
 #else
-const scalar T_diag_max = 1;
+const scalar T_diag_max = 0.01;
 #endif
 
 // Maximum distance for force calculation
@@ -45,12 +45,12 @@ extern const scalar pot_size = 1 * pow(2, 1. / 6.);
 extern const scalar pot_size6 = 2; // pot_size^6
 
 // Domain size
-extern const scalar height = 30.;
-extern const scalar width = 30.;
+extern const scalar height = 2800;
+extern const scalar width = 2800;
 
 // Grid of initial positions
-extern const int grid_h = 32;
-extern const int grid_w = 32;
+extern const int grid_h = 3170;
+extern const int grid_w = 3170;
 
 // Maximum initial velocity
 extern const scalar velocity_max = 100;
@@ -144,7 +144,7 @@ int main()
 	try
 	{
 		// Integrate until the system reaches a desired time
-		while (T < 20)
+		while (T < 0.1)
 		{
 			// Is it time for a screen refresh again?
 			if (T_diag > T_diag_max)

@@ -1,8 +1,8 @@
 NAME = GAS
 CC = g++
 
-CFLAGS = -std=gnu++14 -Ofast -c -Wall -fopenmp
-LFLAGS = -std=gnu++14 -Ofast -lncurses -fopenmp
+CFLAGS = -std=gnu++14 -Ofast -c -Wall
+LFLAGS = -std=gnu++14 -Ofast -lncurses
 
 #------------------------------------------------------------------------------
 SOURCE = gas.cpp vec.cpp force.cpp gui.cpp dispatch.cpp
@@ -26,6 +26,10 @@ clean:
 	@rm -f $(NAME)
 #------------------------------------------------------------------------------
 new: clean $(NAME)
+#------------------------------------------------------------------------------
+openmp: CFLAGS += -fopenmp
+openmp: LFLAGS += -fopenmp
+openmp: $(NAME)
 #------------------------------------------------------------------------------
 run: $(NAME)
 	./$(NAME)
