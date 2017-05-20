@@ -107,7 +107,7 @@ struct Dispatcher
 
 	bool valid_id(id_vec v)
 	{
-		if (v.x < 0 || v.x >= num_boxes_x || v.y < 0 || v.y > num_boxes_y)
+		if (v.x < 0 || v.x >= num_boxes_x || v.y < 0 || v.y >= num_boxes_y)
 			return false;
 
 		return true;
