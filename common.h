@@ -20,3 +20,4 @@ extern const int grid_w;
 
 extern const scalar velocity_max;
 extern const scalar dt;
+extern const int num_boxes;

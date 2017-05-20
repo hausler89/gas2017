@@ -9,7 +9,7 @@ extern Dispatcher D;
 
 // Recalculate the forces acting on the particles.
 // Will backup the previous force to the pV member of the particles.
-void update_force(particle_list &p, const vector<char> box)
+void update_force(particle_list &p, const vector<char> *box)
 {
 	// Backup the force and calculate the wall repulsion
 	// This loop will initialize the force!
@@ -69,50 +69,13 @@ void update_force(particle_list &p, const vector<char> box)
 			// Get a new job
 			job J = D.get_next_job();
 
-			// Index of first particle (origin particle)
-			int i1;
-
-			// Index of particle that is compared to the origin particle
-			int i2;
-
-			// Get the first i1 particle (origin)
-			i1 = next_origin(-1, box, J);
-
-			// Simulation runs as long as there are particles in the central
-			// box. Check wether we have a particle at all.
-			bool origins_left = true;
-
-			if (i1 < 0)
-				origins_left = false;
-
-			while (origins_left)
+			for (auto i1 : box[J.origin])
 			{
-				// Get the next particle
-				i2 = next_particle(-1, box, J);
-
-				// Get the next origin particle already, so we can prefetch while doing the calculation
-				int i1_next = next_origin(i1, box, J);
-
-				bool particles_left = true;
-				if (i2 < 0)
-					particles_left = false;
-
-				while (particles_left)
+				for (auto id : J.id)
 				{
-					// Check if this is another origin particle. If it is,
-					// then only calculate the force if we didn't do this before
-					// and only if this is not the i1 particle itself.
-					bool calculate = true;
-
-					if (box[i2] == J.origin && i2 <= i1)
-						calculate = false;
-
-					// Get the next particle already, so we can prefetch the memory before
-					// doing the force calculation
-					int i2_next = next_particle(i2, box, J);
-
-					if (calculate)
+					for (auto i2 : box[id])
 					{
+
 						// Displacement "vector" from p[i] to p[j]
 						scalar deltax = p[i1].r.x - p[i2].r.x;
 						scalar deltay = p[i1].r.y - p[i2].r.y;
@@ -145,26 +108,10 @@ void update_force(particle_list &p, const vector<char> box)
 							p[i1].F += vec(-Fx, -Fy);
 							p[i2].F += vec(+Fx, +Fy);
 						}
-					} // End of if(calculate)
-
-					// Set i2 to the next particle and check wether it exists
-					if (i2_next < 0)
-						particles_left = false;
-					else
-						i2 = i2_next;
-
-				} // End of while(particles_left)
-
-				// Set i1 to the next particle and check wether it exists
-				if (i1_next < 0)
-					origins_left = false;
-				else
-					i1 = i1_next;
-
-			} // End of while(origins_left)
-
+					}
+				}
+			}
 		} // End of while(D.jobs_available())
-
 	} while (D.advance_phase());
 }
 

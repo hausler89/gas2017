@@ -59,6 +59,8 @@ extern const scalar velocity_max = 100;
 extern const int num_boxes_x = int(width / box_cutoff) + 1;
 extern const int num_boxes_y = int(height / box_cutoff) + 1;
 
+extern const int num_boxes = num_boxes_x * num_boxes_y;
+
 Dispatcher D;
 
 int main()
@@ -90,7 +92,7 @@ int main()
 	particle_list p(N);
 
 	// Create a list of ids that indicates in which box a particle is in.
-	vector<char> box(N);
+	vector<char> box[num_boxes];
 
 	// Init the particles
 	for (size_t i = 0; i < N; ++i)
@@ -115,8 +117,7 @@ int main()
 		// Set position
 		p[i].r = vec(x, y);
 
-		// Init the box id's for all particles
-		box[i] = coord2id(x, y);
+		box[coord2id(x, y)].push_back(i);
 	}
 
 	// Update the force once, so that the first verlet step
@@ -166,6 +167,10 @@ int main()
 #endif
 			}
 
+			// Remove old ids
+			for (int i = 0; i < num_boxes; ++i)
+				box[i].clear();
+
 			// Step 1: Update all particle positions (drift)
 			for (size_t part = 0; part < p.size(); ++part)
 			{
@@ -173,8 +178,8 @@ int main()
 				// Drift
 				i.r += dt * i.v + 0.5 * dt * dt * i.F;
 
-				// Update the box
-				box[part] = coord2id(i.r.x, i.r.y);
+				// Update the boxes
+				box[coord2id(i.r.x, i.r.y)].push_back(part);
 
 				// Test for NaN in the position
 				if (isnan(i.r.y) || isnan(i.r.x))
