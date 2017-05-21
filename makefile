@@ -5,16 +5,16 @@ CFLAGS = -std=gnu++14 -Ofast -c -Wall -Wno-unknown-pragmas
 LFLAGS = -std=gnu++14 -Ofast -lncurses -Wno-unknown-pragmas
 
 #------------------------------------------------------------------------------
-SOURCE = gas.cpp vec.cpp force.cpp gui.cpp dispatch.cpp
-HEADER = common.h dispatch.h Dispatcher.h force.h gui.h job.h particle.h vec.h
-OBJECT = gas.o vec.o force.o gui.o dispatch.o
+SOURCE = src/gas.cpp src/vec.cpp src/force.cpp src/gui.cpp src/dispatch.cpp
+HEADER = src/common.h src/dispatch.h src/Dispatcher.h src/force.h src/gui.h src/job.h src/particle.h src/vec.h
+OBJECT = obj/gas.o obj/vec.o obj/force.o obj/gui.o obj/dispatch.o
 
 #------------------------------------------------------------------------------
 $(NAME):$(OBJECT)
 	$(CC) -o $@ $(OBJECT) $(LFLAGS)
 
 #------------------------------------------------------------------------------
-%.o : %.cpp $(HEADER)
+obj/%.o : src/%.cpp $(HEADER)
 	$(CC) $(CFLAGS) $< -o $@
 #------------------------------------------------------------------------------
 debug: CFLAGS = -std=gnu++14 -O0 -c -Wall -g
