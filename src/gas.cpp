@@ -34,7 +34,7 @@ extern const scalar dt = 1e-6;
 #ifdef USE_GUI
 const scalar T_diag_max = 1 * dt;
 #else
-const scalar T_diag_max = 1000*dt;
+const scalar T_diag_max = 1000 * dt;
 #endif
 
 // Maximum distance for force calculation
