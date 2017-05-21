@@ -20,15 +20,18 @@
                         "ignoreFailures": true
                     }
                 ]
-            }, 
+            },
             "pipeTransport": {
                 "pipeCwd": "",
                 "pipeProgram": "c:\\windows\\sysnative\\bash.exe",
-                "pipeArgs": ["-c"],
+                "pipeArgs": [
+                    "-c"
+                ],
                 "debuggerPath": "/usr/bin/gdb"
             },
             "sourceFileMap": {
-                "/mnt/c": "c:\\"
+                "/mnt/c": "c:\\",
+                "/usr/include": "c:\\include\\"
             }
         }
     ]
