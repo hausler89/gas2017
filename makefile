@@ -4,10 +4,17 @@ CC = g++
 CFLAGS = -std=gnu++14 -Ofast -c -Wall -Wno-unknown-pragmas
 LFLAGS = -std=gnu++14 -Ofast -lncurses -Wno-unknown-pragmas
 
+SRC_PREFIX = src/
+OBJ_PREFIX = obj/
+
 #------------------------------------------------------------------------------
-SOURCE = src/gas.cpp src/vec.cpp src/force.cpp src/gui.cpp src/dispatch.cpp
-HEADER = src/common.h src/dispatch.h src/Dispatcher.h src/force.h src/gui.h src/job.h src/particle.h src/vec.h
-OBJECT = obj/gas.o obj/vec.o obj/force.o obj/gui.o obj/dispatch.o
+SOURCE_FILES = gas.cpp vec.cpp force.cpp gui.cpp dispatch.cpp
+HEADER_FILES = common.h dispatch.h Dispatcher.h force.h gui.h job.h particle.h vec.h
+OBJECT_FILES = gas.o vec.o force.o gui.o dispatch.o
+
+SOURCE = $(addprefix $(SRC_PREFIX),$(SOURCE_FILES))
+HEADER = $(addprefix $(SRC_PREFIX),$(HEADER_FILES))
+OBJECT = $(addprefix $(OBJ_PREFIX),$(OBJECT_FILES))
 
 #------------------------------------------------------------------------------
 $(NAME):$(OBJECT)
@@ -24,6 +31,7 @@ debug: $(NAME)
 clean:
 	@rm -f *.o
 	@rm -f $(NAME)
+	@rm -f obj/*
 #------------------------------------------------------------------------------
 new: clean $(NAME)
 #------------------------------------------------------------------------------
