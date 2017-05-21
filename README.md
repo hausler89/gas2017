@@ -6,24 +6,28 @@ Main source file is gas.cpp, there you will find the definition of global variab
 
 Compile with
 
-  make
+	make
+
+Compile with OpenMP support
+
+	make openmp
 
 Compile with ncurses graphical output
 
-  make gfx
-  
+	make gfx
+	
 Compile and run with
 
-  make run
-  
+	make run
+	
 Clean with
 
-  make clean
-  
+	make clean
+	
 Recompile everything
 
-  make new
-  
+	make new
+	
 Compile with debugging symbols
 
-  make debug
+	make debug
