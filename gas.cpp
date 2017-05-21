@@ -27,7 +27,7 @@ using namespace std;
 // SYSTEM PARAMETERS
 
 // Particle count
-extern const size_t N = 10000000;
+extern const size_t N = 100000;
 
 // Step size for integration
 extern const scalar dt = 1e-4;
@@ -48,12 +48,12 @@ extern const scalar pot_size = 1 * pow(2, 1. / 6.);
 extern const scalar pot_size6 = 2; // pot_size^6
 
 // Domain size
-extern const scalar height = 2700;
-extern const scalar width = 2700;
+extern const scalar height = 270;
+extern const scalar width = 270;
 
 // Grid of initial positions
-extern const int grid_h = 3170;
-extern const int grid_w = 3170;
+extern const int grid_h = 317;
+extern const int grid_w = 317;
 
 // Maximum initial velocity
 extern const scalar velocity_max = 10;
@@ -129,7 +129,7 @@ int main()
 		scalar r = sqrt(deltax * deltax + deltay * deltay);
 
 		if (r < width / 10.)
-			p[i].v = vec(0, 200);
+			p[i].v = vec(0, 20);
 
 		int id = coord2id(x, y);
 
