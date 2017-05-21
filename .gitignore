@@ -3,3 +3,4 @@ GAS*
 output.dat
 gmon.out
 .gdb*
+out*

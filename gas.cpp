@@ -5,6 +5,8 @@
 #include <fstream>
 #include <curses.h>
 #include <unistd.h>
+#include <sstream>
+#include <iomanip>
 #include "vec.h"
 #include "particle.h"
 #include "gui.h"
@@ -34,7 +36,7 @@ extern const scalar dt = 1e-4;
 #ifdef USE_GUI
 const scalar T_diag_max = 10 * dt;
 #else
-const scalar T_diag_max = 0;
+const scalar T_diag_max = 100 * dt;
 #endif
 
 // Maximum distance for force calculation
@@ -54,7 +56,7 @@ extern const int grid_h = 3170;
 extern const int grid_w = 3170;
 
 // Maximum initial velocity
-extern const scalar velocity_max = 100;
+extern const scalar velocity_max = 10;
 
 // Calculation box count (for parallelism)
 extern const int num_boxes_x = int(width / box_cutoff) + 1;
@@ -118,6 +120,17 @@ int main()
 		// Set position
 		p[i].r = vec(x, y);
 
+		scalar cx = width / 2.;
+		scalar cy = height / 2.;
+
+		scalar deltax = abs(cx - x);
+		scalar deltay = abs(cy - y);
+
+		scalar r = sqrt(deltax * deltax + deltay * deltay);
+
+		if (r < width / 10.)
+			p[i].v = vec(0, 200);
+
 		int id = coord2id(x, y);
 
 		box[id].push_back(i);
@@ -142,16 +155,27 @@ int main()
 	// Currently checked:
 	//				- particle tunneling through west or east walls
 	//				- NaN values in particle position
+	int out_count = 0;
 	try
 	{
 		// Integrate until the system reaches a desired time
-		while (T < 100*dt)
+		while (T < 100)
 		{
 			// Is it time for a screen refresh again?
 			if (T_diag > T_diag_max)
 			{
 				// Reset diagnostic timer
 				T_diag = 0;
+				stringstream ss;
+
+				ss << "out/dump" << setfill('0') << setw(6) << out_count << ".dat";
+				ofstream FILE;
+				FILE.open(ss.str().c_str(), std::ofstream::out);
+				for (int i = 0; i < num_boxes; ++i)
+					FILE << box[i].size() << endl;
+				FILE.close();
+
+				out_count++;
 
 #ifdef USE_GUI
 				// Draw the particles to the screen
@@ -170,21 +194,21 @@ int main()
 #endif
 			}
 
-// Remove old ids
-// #pragma omp parallel for
+			// Remove old ids
+			// #pragma omp parallel for
 			for (int i = 0; i < num_boxes; ++i)
 				box[i].clear();
 
-// Step 1: Update all particle positions (drift)
-// #pragma omp parallel for
+			// Step 1: Update all particle positions (drift)
+			// #pragma omp parallel for
 			for (size_t part = 0; part < p.size(); ++part)
 			{
 				particle &i = p[part];
 				// Drift
 				i.r += dt * i.v + 0.5 * dt * dt * i.F;
 
-// Update the boxes
-// #pragma omp critical
+				// Update the boxes
+				// #pragma omp critical
 				{
 					box[coord2id(i.r.x, i.r.y)].push_back(part);
 				}
@@ -211,10 +235,10 @@ int main()
 			// Step 2: Update particle forces
 			update_force(p, box);
 
-// Step 3: Update the particles' velocities (kick)
-// pF denotes the force from the last step, prior
-// to the force update
-// #pragma omp parallel for
+			// Step 3: Update the particles' velocities (kick)
+			// pF denotes the force from the last step, prior
+			// to the force update
+			// #pragma omp parallel for
 			for (size_t part = 0; part < p.size(); ++part)
 			{
 				particle &i = p[part];
