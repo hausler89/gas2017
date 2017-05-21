@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C++ Launch",
+            "name": "WSL Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "~/Desktop/sol5/GAS",
@@ -28,7 +28,7 @@
                 "debuggerPath": "/usr/bin/gdb"
             },
             "sourceFileMap": {
-                "/mnt/z": "z:\\"
+                "/mnt/c": "c:\\"
             }
         }
     ]
