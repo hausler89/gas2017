@@ -73,18 +73,6 @@ int main()
 	init_gui();
 #endif
 
-	// cout << "boxes: " << num_boxes_x * num_boxes_y << endl;
-	// do
-	// {
-	// 	while (D.jobs_available())
-	// 	{
-	// 		job J = D.get_next_job();
-	// 		cout << int(J.origin) << endl;
-	// 	}
-	// } while (D.advance_phase());
-
-	// return 0;
-
 	// Seed the RNG
 	srand(time(NULL));
 
