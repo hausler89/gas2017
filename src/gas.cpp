@@ -20,7 +20,7 @@ using namespace std;
 // if USE_GUI is defined, the domain will be rendered with
 // ncurses. Comment this line to disable this feature.
 // Compiling with 'make gfx' will also set the variable.
-#define USE_GUI
+// #define USE_GUI
 
 // SYSTEM PARAMETERS
 
@@ -34,7 +34,7 @@ extern const scalar dt = 1e-6;
 #ifdef USE_GUI
 const scalar T_diag_max = 1 * dt;
 #else
-const scalar T_diag_max = 0;
+const scalar T_diag_max = 1000*dt;
 #endif
 
 // Maximum distance for force calculation
