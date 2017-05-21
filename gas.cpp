@@ -114,7 +114,6 @@ int main()
 		// not introduce more energy to the system
 		scalar x = scalar(pos_x) / scalar(grid_w) * (width - 2 * pot_size) + pot_size;
 		scalar y = scalar(pos_y) / scalar(grid_h + 1) * height;
-
 		// Set position
 		p[i].r = vec(x, y);
 
@@ -170,21 +169,21 @@ int main()
 #endif
 			}
 
-// Remove old ids
-// #pragma omp parallel for
+			// Remove old ids
+			// #pragma omp parallel for
 			for (int i = 0; i < num_boxes; ++i)
 				box[i].clear();
 
-// Step 1: Update all particle positions (drift)
-// #pragma omp parallel for
+			// Step 1: Update all particle positions (drift)
+			// #pragma omp parallel for
 			for (size_t part = 0; part < p.size(); ++part)
 			{
 				particle &i = p[part];
 				// Drift
 				i.r += dt * i.v + 0.5 * dt * dt * i.F;
 
-// Update the boxes
-// #pragma omp critical
+				// Update the boxes
+				// #pragma omp critical
 				{
 					box[coord2id(i.r.x, i.r.y)].push_back(part);
 				}
@@ -211,10 +210,10 @@ int main()
 			// Step 2: Update particle forces
 			update_force(p, box);
 
-// Step 3: Update the particles' velocities (kick)
-// pF denotes the force from the last step, prior
-// to the force update
-// #pragma omp parallel for
+			// Step 3: Update the particles' velocities (kick)
+			// pF denotes the force from the last step, prior
+			// to the force update
+			// #pragma omp parallel for
 			for (size_t part = 0; part < p.size(); ++part)
 			{
 				particle &i = p[part];

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstdlib>
 
 // Scalar is the floating point datatype for the sim 
