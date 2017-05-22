@@ -1,6 +1,9 @@
 # gas2017
 
 ## Video
+
+10.000.000 million particles in a square domain. Central particles get a high initial velocity and crash into the rest of the material. (Domain is rotated by 90°)
+
 [![Link to youtube video of simulation](https://img.youtube.com/vi/2xDZQ5mNiv8/0.jpg)](https://www.youtube.com/watch?v=2xDZQ5mNiv8)
 
 ## Download
