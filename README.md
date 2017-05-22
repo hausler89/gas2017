@@ -1,5 +1,8 @@
 # gas2017
 
+## Video
+[![Link to youtube video of simulation](https://img.youtube.com/vi/2xDZQ5mNiv8/0.jpg)](https://www.youtube.com/watch?v=2xDZQ5mNiv8)
+
 ## Download
     git clone https://github.com/hausler89/gas2017.git
     
