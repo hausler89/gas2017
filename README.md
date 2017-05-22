@@ -15,6 +15,8 @@ North and South wall are periodic, east and west are LJ repulsive.
 
 Main source file is gas.cpp, there you will find the definition of global variables, system parameters and the main function. The verlet integrator is directly implemented in main(), as this is the main purpose of this program anyways.
 
+Beware: Program is very rough around the edges and has neither reasonable data input, nor output. It's a classroom demonstration.
+
 ## Prerequesites
 
 Needs ncurses to be available on your system. On Ubuntu use
